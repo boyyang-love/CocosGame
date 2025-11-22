@@ -68,7 +68,7 @@ export enum OWNERTYPE {
 export enum ARMSTYPE {
     MELEE,    // 近战武器
     RANGED,   // 远程武器
-    MAGIC     // 魔法武器
+    MAGIC,     // 魔法武器
 }
 
 // 攻击方式

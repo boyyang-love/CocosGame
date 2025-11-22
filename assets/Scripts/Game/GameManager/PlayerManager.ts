@@ -1,4 +1,4 @@
-import { _decorator, Component, instantiate, Label, Node, Prefab } from 'cc'
+import { _decorator, Camera, Component, instantiate, Label, Node, Prefab } from 'cc'
 import { AttackAttr } from '../Attack/AttackAttr'
 import { DefenseAttr } from '../Attack/DefenseAttr'
 import { DamageCalculator } from '../Attack/DamageCalculator'
@@ -15,12 +15,15 @@ export class PlayerManager extends Component {
     // 防御
     public defenseAttr: DefenseAttr = new DefenseAttr()
 
+    protected onLoad() {
+    }
+
     start() {
 
     }
 
     update(deltaTime: number) {
-
+        
     }
 
     // 被攻击时调用（由攻击方触发，如玩家子弹碰撞）
@@ -29,16 +32,43 @@ export class PlayerManager extends Component {
         const { damage, isCrit } = DamageCalculator.calculateFinalDamage(attackerAttr, this.defenseAttr)
 
         // 应用伤害（扣除生命值等）
-        this.reduceHealth(damage)
-        this.setPop(damage, isCrit)
+        this.reduceHealth(damage, isCrit)
+
     }
 
-    private reduceHealth(damage: number) {
+    private reduceHealth(damage: number, isCrit: boolean) {
         // 实现扣血逻辑（如怪物生命值 = 生命值 - damage）
+        ResourceManager.Instance.AwaitGetAsset("Prefabs", "Effects/Boom", Prefab).then((prefab) => {
+            const boomNode = instantiate(prefab)
+            this.node.addChild(boomNode)
+            boomNode.setWorldPosition(this.node.getWorldPosition())
+
+            this.scheduleOnce(() => {
+                if (boomNode.isValid) {
+                    boomNode.destroy()
+                }
+            }, 2)
+        })
+
         this.HP -= damage
         if (this.HP <= 0) {
+            console.log("player die")
+        } else {
+            this.setPop(damage, isCrit)
 
         }
+
+        ResourceManager.Instance.AwaitGetAsset("Prefabs", "Effects/Boom", Prefab).then((prefab) => {
+            const boomNode = instantiate(prefab)
+            this.node.addChild(boomNode)
+            boomNode.setWorldPosition(this.node.getWorldPosition())
+
+            this.scheduleOnce(() => {
+                if (boomNode.isValid) {
+                    boomNode.destroy()
+                }
+            }, 2)
+        })
     }
 
     private setPop(damage: number, isCrit: boolean) {
@@ -57,7 +87,7 @@ export class PlayerManager extends Component {
 
             setTimeout(() => {
                 popPrefab.destroy()
-            }, 3000);
+            }, 3000)
         })
     }
 }

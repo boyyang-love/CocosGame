@@ -1,9 +1,10 @@
-import { _decorator, Component, instantiate, Label, Node, Prefab } from 'cc'
+import { _decorator, Collider2D, Component, instantiate, Label, Node, Prefab, RigidBody2D } from 'cc'
 import { DefenseAttr } from '../Attack/DefenseAttr'
 import { AttackAttr } from '../Attack/AttackAttr'
 import { DamageCalculator } from '../Attack/DamageCalculator'
 import { ResourceManager } from '../Framework/Managers/ResourceManager'
 import { Pop } from '../../Pop/Pop'
+import { Exp } from '../Exp/Exp'
 const { ccclass, property } = _decorator
 
 @ccclass('EnemyManager')
@@ -20,7 +21,7 @@ export class EnemyManager extends Component {
 
     }
 
-    public initAttackAttr(attackAttr: AttackAttr){
+    public initAttackAttr(attackAttr: AttackAttr) {
         this.attackAttr = attackAttr
     }
 
@@ -30,24 +31,28 @@ export class EnemyManager extends Component {
         const { damage, isCrit } = DamageCalculator.calculateFinalDamage(attackerAttr, this.defenseAttr)
 
         // 应用伤害（扣除生命值等）
-        this.setPop(damage, isCrit)
-        this.reduceHealth(damage)
+        this.reduceHealth(damage, isCrit)
     }
 
-    private reduceHealth(damage: number) {
+    async reduceHealth(damage: number, isCrit: boolean) {
         // 实现扣血逻辑（如怪物生命值 = 生命值 - damage）
-        this.HP-= damage
-        if(this.HP <= 0) {
-            this.node.destroy()
+        this.HP = this.HP - damage
+        if (this.HP <= 0) {
+            const rigidBody = this.getComponent(RigidBody2D)
+            if(rigidBody){
+                rigidBody.enabled = false
+            }
+            this.createExpNode()
+        } else {
+            this.setPop(damage, isCrit)
         }
     }
 
-    private setPop(damage: number, isCrit: boolean){
+    setPop(damage: number, isCrit: boolean) {
         ResourceManager.Instance.AwaitGetAsset("Prefabs", "Pop/pop", Prefab).then((Prefab) => {
             const popPrefab = instantiate(Prefab)
-            console.log(isCrit)
             // 是否暴击
-            if(isCrit) {
+            if (isCrit) {
                 const labelNode = popPrefab.getChildByName("Label")
                 const label = labelNode.getComponent(Label)
                 label.enableOutline = true
@@ -56,8 +61,17 @@ export class EnemyManager extends Component {
             const popScript = popPrefab.getComponent(Pop)
             popScript.setValue(damage)
             popPrefab.setWorldPosition(this.node.worldPosition)
-            
+
         })
+    }
+
+    async createExpNode() {
+        const expPrefab = await ResourceManager.Instance.AwaitGetAsset("Prefabs", "Effects/BoomPink", Prefab)
+        const expNode = instantiate(expPrefab)
+        this.node.parent.addChild(expNode)
+        expNode.setWorldPosition(this.node.getWorldPosition())
+
+        this.node.destroy()
     }
 
 }

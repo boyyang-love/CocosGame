@@ -23,21 +23,32 @@ export class Arms extends Component {
         }
     }
 
+    protected onDestroy() {
+        const collider = this.getComponent(Collider2D)
+        if (collider) {
+            collider.off(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this)
+            collider.off(Contact2DType.END_CONTACT, this.onEndContact, this)
+        }
+    }
+
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
         // 只在两个碰撞体开始接触时被调用一次
         if (this.ownerType === OWNERTYPE.ENEMY && otherCollider.group === PHY_GRPUP.PLAYER) {
-            console.log(`玩家受到伤害`)
-            // 
-            const playerManager = otherCollider.getComponent(PlayerManager)
-            playerManager.takeDamage(this.attackAttr)
-            // this.destroyArm()
+            this.scheduleOnce(() => {
+                console.log(`玩家受到伤害`)
+                const playerManager = otherCollider.node.getComponent(PlayerManager)
+                playerManager.takeDamage(this.attackAttr)
+                this.destroyArm()
+            }, 0)
         }
 
         if (this.ownerType === OWNERTYPE.PLAYER && otherCollider.group === PHY_GRPUP.ENEMY) {
-            console.log(`怪物受到伤害`)
-            const enemyManager = otherCollider.node.getComponent(EnemyManager)
-            enemyManager.takeDamage(this.attackAttr)
-            // this.destroyArm()
+            this.scheduleOnce(() => {
+                console.log(`怪物受到伤害`)
+                const enemyManager = otherCollider.node.getComponent(EnemyManager)
+                enemyManager.takeDamage(this.attackAttr)
+                this.destroyArm()
+            }, 0)
         }
     }
 

@@ -1,6 +1,5 @@
 import { _decorator, Component, director, Enum, NodeEventType, AudioSource } from 'cc'
 import { MenuType } from '../Constant/Enum'
-import { ScenarioManager } from '../Game/Framework/Managers/ScenarioManager'
 import { Menu } from '../GameHomeScene/Menu'
 const { ccclass, property, type } = _decorator
 
@@ -26,15 +25,12 @@ export class MenuItem extends Component {
     }
 
     menuClick() {
-        if (this.menu === 2) {
-            new ScenarioManager().Init()
-            ScenarioManager.Instance.loadScenario().then(() => {
-                director.loadScene("GameCombatMapScene")
-            })
-        }
-
         Menu.Instance.menuActive = this.menu
         this.mouseClickAudio.play()
+
+        if(this.menu === MenuType.battle){
+            director.loadScene("GameCombatScene")
+        }
     }
 }
 

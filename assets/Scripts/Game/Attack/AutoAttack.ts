@@ -8,50 +8,25 @@ const { ccclass, property } = _decorator
 export class AutoAttack extends Component {
     @property(Node)
     public attackTargetNode: Node = null
-
-    @property({ tooltip: "攻击范围" })
-    public attackRange: number = 100
-
-    @property({ tooltip: "攻击速度" })
-    public attackSpeed: number = 200
-
-    @property({ tooltip: "多枚子弹攻击角度" })
-    public attackAngle: number = 90
-
-    @property({ tooltip: "攻击间隔" })
-    public attackSpace: number = 2
-
-    @property({ tooltip: "多子弹攻击时，攻击间隔" })
-    public bulletSpace: number = 0.5
-
-    @property({ tooltip: "武器数量" })
-    public armsCount: number = 2
-
-    @property({ tooltip: "武器类型" })
-    public armsType: ARMSTYPE = ARMSTYPE.MELEE
-
     @property({ tooltip: "武器预制体", type: Prefab })
     public armsPrefab: Prefab = null
 
-    @property({ tooltip: "武器拥有者", type: OWNERTYPE })
-    public armsOwner: OWNERTYPE = OWNERTYPE.PLAYER
-
-    @property({ tooltip: "武器生命" })
-    public armsLifeTime: number = 4
-
-    // 攻击参数
-    public attackAttr: AttackAttr = new AttackAttr()
+    public attackRange: number = 100 // 攻击范围
+    public attackSpeed: number = 200 // 攻击速度
+    public attackAngle: number = 90 // 多武器攻击夹角
+    public attackSpace: number = 2 // 攻击时间间隔
+    public bulletSpace: number = 0.5 // 多武器每一枚 发射间隔
+    public armsCount: number = 2 // 武器数量
+    public armsType: ARMSTYPE = ARMSTYPE.MELEE // 武器类型
+    public armsOwner: OWNERTYPE = OWNERTYPE.PLAYER // 武器拥有者
+    public armsLifeTime: number = 3  // 武器寿命（远程攻击武器）
+    public attackAttr: AttackAttr = new AttackAttr() // 攻击参数
 
     private angles: number[] = [] // 每个元素的初始角度（避免重叠）
-
-    private armsItems: Node[] = []
-
-    protected onLoad() {
-
-    }
+    private armsItems: Node[] = [] // 武器实例
+    private armsNode: Node[] = []
 
     start() {
-        console.log(`begin-${this.armsType}`)
         if (this.armsType === ARMSTYPE.MELEE) {
             this.initArms()
         }
@@ -62,7 +37,9 @@ export class AutoAttack extends Component {
     }
 
     protected onDestroy() {
-        this.unscheduleAllCallbacks()
+        this.armsNode.forEach(node => {
+            this.node.parent.removeChild(node)
+        })
     }
 
     update(deltaTime: number) {
@@ -127,13 +104,12 @@ export class AutoAttack extends Component {
 
         dirs.forEach(dir => {
             this.scheduleOnce(() => {
-                console.log(`距离 ${dir}  长度 ${dir.length()}`)
                 this.spawnBullet(dir)
             }, this.bulletSpace)
         })
     }
 
-    private getStep(angle?: number): number {
+    getStep(angle?: number): number {
         if (angle) {
             return angle / this.armsCount
         }
@@ -150,7 +126,7 @@ export class AutoAttack extends Component {
     }
 
     // 实例化子弹并设置方向
-    private spawnBullet(direction: Vec2) {
+    spawnBullet(direction: Vec2) {
         if (!this.attackTargetNode) {
             return
         }
@@ -170,9 +146,10 @@ export class AutoAttack extends Component {
         const rigidBody = armsNode.getComponent(RigidBody2D)
         if (rigidBody) {
             // 设置刚体速度（沿方向飞行）
-            console.log(`${rigidBody}xxxxxx${direction}xxxxx${direction.length()}`)
             rigidBody.linearVelocity = direction.multiplyScalar(this.attackSpeed)
         }
+
+        this.armsNode.push(armsNode)
 
         // 子弹自动销毁（避免内存泄漏）
         this.scheduleOnce(() => {
@@ -195,7 +172,6 @@ export class AutoAttack extends Component {
         Vec2.subtract(originalDir, targetPos, startPos)
         // 位置重合特殊处理
         if (originalDir.lengthSqr() < 0.0001) {
-            console.warn("发射点与目标重合，返回默认方向")
             return new Vec2(0, 1).normalize()
         }
         // 1. 计算起点到目标点的原始方向向量（并归一化）
