@@ -1,0 +1,74 @@
+[
+	{
+		"id": "1001",
+		"type": "default",
+		"icon": "textures/skills/lightning",
+		"descript": "你偶遇了美人鱼，由于没有承受住诱惑，生命值降低5%。",
+		"effect": {
+			"HP": {
+				"type": "mult",
+				"value": -0.5
+			},
+			"MP": {
+				"type": "add",
+				"value": 0
+			},
+			"ATK": {
+				"type": "add",
+				"value": 0
+			},
+			"DEF": { 
+				"type": "add",
+				"value": 0
+			}
+		}
+	},
+	{
+		"id": "1002",
+		"type": "battle",
+		"icon": "textures/skills/lightning",
+		"descript": "你遇到了看起来不太和善的史莱姆战斗力减少10",
+		"effect": {
+			"HP": {
+				"type": "mult",
+				"value": 0
+			},
+			"MP": {
+				"type": "add",
+				"value": 0
+			},
+			"ATK": {
+				"type": "sub",
+				"value": 10
+			},
+			"DEF": {
+				"type": "add",
+				"value": 0
+			}
+		}
+	},
+	{
+		"id": "1003",
+		"type": "skill",
+		"icon": "textures/skills/lightning",
+		"descript": "xxxxxxx",
+		"effect": {
+			"HP": {
+				"type": "mult",
+				"value": 0
+			},
+			"MP": {
+				"type": "add",
+				"value": 0
+			},
+			"ATK": {
+				"type": "add",
+				"value": 100
+			},
+			"DEF": {
+				"type": "add",
+				"value": 100
+			}
+		}
+	}
+]

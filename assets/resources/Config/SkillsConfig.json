@@ -1,0 +1,24 @@
+[
+	{
+		"skillId": 1001, 
+		"name": "烈焰", 
+		"desc": "对敌方造成大量伤害",
+		"icon": "textures/skills/lightning", 
+		"maxLevel": 5,
+		"levels": [
+			{
+				"damage": 100,
+				"cd": 3,
+				"mpCost": 20
+			}, 
+			{
+				"damage": 150,
+				"cd": 2.8,
+				"mpCost": 25
+			} 
+		],
+		"castAnim": "CircleFire", 
+		"effectPrefab": "Skills/CircleFire", 
+		"sound": "sounds/lightning"
+	}
+]
