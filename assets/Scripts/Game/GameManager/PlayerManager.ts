@@ -4,6 +4,8 @@ import { DefenseAttr } from '../Attack/DefenseAttr'
 import { DamageCalculator } from '../Attack/DamageCalculator'
 import { ResourceManager } from '../Framework/Managers/ResourceManager'
 import { Pop } from '../../Pop/Pop'
+import { PlayerStateManager } from './PlayerStateManager'
+import { HPTYPE } from '../../Constant/Enum'
 const { ccclass, property } = _decorator
 
 @ccclass('PlayerManager')
@@ -47,16 +49,10 @@ export class PlayerManager extends Component {
                 if (boomNode.isValid) {
                     boomNode.destroy()
                 }
-            }, 2)
+            }, 1)
         })
 
-        this.HP -= damage
-        if (this.HP <= 0) {
-            console.log("player die")
-        } else {
-            this.setPop(damage, isCrit)
-
-        }
+        PlayerStateManager.Instance.setHp(-damage, HPTYPE.HP)
 
         ResourceManager.Instance.AwaitGetAsset("Prefabs", "Effects/Boom", Prefab).then((prefab) => {
             const boomNode = instantiate(prefab)
@@ -89,6 +85,10 @@ export class PlayerManager extends Component {
                 popPrefab.destroy()
             }, 3000)
         })
+    }
+
+    public setExp(exp: number) {
+        PlayerStateManager.Instance.setEXP(exp)
     }
 }
 

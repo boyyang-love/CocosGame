@@ -1,9 +1,10 @@
-import { _decorator, Component, instantiate, Node, Prefab, sp, Vec3 } from 'cc'
+import { _decorator, Camera, Component, instantiate, Node, Prefab, sp, Vec3 } from 'cc'
 import { ResourceManager } from '../Game/Framework/Managers/ResourceManager'
 import { ARMSTYPE, OWNERTYPE } from '../Constant/Enum'
 import { AttackAttr } from '../Game/Attack/AttackAttr'
 import { AutoAttack } from '../Game/Attack/AutoAttack'
 import { EnemyMove } from '../Game/Move/EnemyMove'
+import { CameraFollow2D } from '../Game/Framework/Managers/CameraFollow2D'
 const { ccclass, property } = _decorator
 
 @ccclass('CreateEnemys')
@@ -46,9 +47,20 @@ export class CreateEnemys extends Component {
         autoAttackScript.attackRange = 100
 
         this.node.addChild(playerNode)
-        playerNode.setWorldPosition(new Vec3(0, 0, 0))
+        playerNode.setWorldPosition(new Vec3(500, 500, 0))
 
         this.player = playerNode
+
+        const cameraNode = this.node.getChildByName("Camera")
+
+        const cameraScript = cameraNode.getComponent(CameraFollow2D)
+
+        console.log(`${cameraNode}----`)
+
+        if (cameraScript) {
+            cameraScript.target = this.player
+        }
+
     }
 
     async initEnemy() {
@@ -63,13 +75,15 @@ export class CreateEnemys extends Component {
 
             // 设置攻击相关行为
             const spiderAutoAttackScript = spiderNode.getComponent(AutoAttack)
-            spiderAutoAttackScript.armsCount = 5
+            spiderAutoAttackScript.armsCount = 1
             spiderAutoAttackScript.attackAngle = 90
             spiderAutoAttackScript.armsPrefab = armsPrefab
-            spiderAutoAttackScript.attackAttr = new AttackAttr()
+            spiderAutoAttackScript.attackAttr = new AttackAttr({
+                baseDamage: 1
+            })
             spiderAutoAttackScript.armsOwner = OWNERTYPE.ENEMY
             spiderAutoAttackScript.armsType = ARMSTYPE.RANGED
-            spiderAutoAttackScript.attackSpeed = 10
+            spiderAutoAttackScript.attackSpeed = 5
             spiderAutoAttackScript.attackRange = 200
             spiderAutoAttackScript.attackTargetNode = this.player
             spiderNode.setWorldPosition(new Vec3(300, 500, 0))

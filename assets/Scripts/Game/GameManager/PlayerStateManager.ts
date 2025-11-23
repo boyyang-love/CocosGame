@@ -1,22 +1,19 @@
-import { _decorator, Component, instantiate, Label, Node, Prefab } from 'cc'
-import { EXPType, HPType, MPType, SkillType } from '../../Constant/Enum'
-import { AttackAttr } from '../Attack/AttackAttr'
-import { DefenseAttr } from '../Attack/DefenseAttr'
-const { ccclass, property } = _decorator
+import { HPTYPE } from "../../Constant/Enum"
+import { AttackAttr } from "../Attack/AttackAttr"
+import { DefenseAttr } from "../Attack/DefenseAttr"
 
-@ccclass('PlayerStateManager')
-export class PlayerStateManager extends Component {
+export class PlayerStateManager {
     public static Instance: PlayerStateManager = null
     // 当前等级
-    private Level: number = 0
+    public Level: number = 0
     // 最大经验值
-    private MaxEXP: number = 100
+    public MaxEXP: number = 300
     // 当前经验值
-    private EXP: number = 0
+    public EXP: number = 0
     // 最大生命
-    private MaxHP: number = 120
+    public MaxHP: number = 1000
     // 当前生命
-    private HP: number = 120
+    public HP: number = 1000
     // 攻击
     public attackAttr: AttackAttr = new AttackAttr()
     // 防御
@@ -24,7 +21,25 @@ export class PlayerStateManager extends Component {
 
     public Init() {
         if (PlayerStateManager.Instance === null) {
-            PlayerStateManager.Instance = this
+            PlayerStateManager.Instance = new PlayerStateManager()
+        }
+    }
+
+    public setEXP(exp: number) {
+        this.EXP += exp
+        if(this.EXP > this.MaxEXP) {
+            this.Level += 1
+            this.EXP = this.EXP - this.MaxEXP
+        }
+    }
+
+    public setHp(hp: number, type: HPTYPE) {
+        if(type === HPTYPE.HP) {
+            this.HP = this.HP + hp
+        }
+
+        if(type === HPTYPE.HPMax) {
+            this.MaxHP = this.MaxHP + hp
         }
     }
 }

@@ -26,7 +26,7 @@ export enum EXPType {
     MaxEXP,
 }
 
-export enum HPType {
+export enum HPTYPE {
     HP,
     HPMax,
 }
@@ -56,6 +56,7 @@ export enum PHY_GRPUP {
     ENEMY = 1 << 2, 
     ARMS = 1 << 3,
     PLAYER = 1 << 4,
+    EXP = 1 << 5,
 }
 
 // 武器拥有者

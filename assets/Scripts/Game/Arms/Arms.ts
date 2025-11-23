@@ -35,7 +35,7 @@ export class Arms extends Component {
         // 只在两个碰撞体开始接触时被调用一次
         if (this.ownerType === OWNERTYPE.ENEMY && otherCollider.group === PHY_GRPUP.PLAYER) {
             this.scheduleOnce(() => {
-                console.log(`玩家受到伤害`)
+                // console.log(`玩家受到伤害`)
                 const playerManager = otherCollider.node.getComponent(PlayerManager)
                 playerManager.takeDamage(this.attackAttr)
                 this.destroyArm()
@@ -44,7 +44,7 @@ export class Arms extends Component {
 
         if (this.ownerType === OWNERTYPE.PLAYER && otherCollider.group === PHY_GRPUP.ENEMY) {
             this.scheduleOnce(() => {
-                console.log(`怪物受到伤害`)
+                // console.log(`怪物受到伤害`)
                 const enemyManager = otherCollider.node.getComponent(EnemyManager)
                 enemyManager.takeDamage(this.attackAttr)
                 this.destroyArm()
