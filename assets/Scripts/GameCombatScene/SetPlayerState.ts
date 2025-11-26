@@ -16,7 +16,6 @@ export class SetPlayerState extends Component {
     }
 
     update(deltaTime: number) {
-        console.log(PlayerStateManager.Instance.Level)
         this.updateState()
     }
 

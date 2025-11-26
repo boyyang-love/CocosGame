@@ -51,9 +51,9 @@ export enum MoveType {
 
 // 碰撞矩阵
 export enum PHY_GRPUP {
-    DEFAULT = 1 << 0,  
-    OBOSTACLE = 1<< 1,
-    ENEMY = 1 << 2, 
+    DEFAULT = 1 << 0,
+    OBOSTACLE = 1 << 1,
+    ENEMY = 1 << 2,
     ARMS = 1 << 3,
     PLAYER = 1 << 4,
     EXP = 1 << 5,
@@ -67,12 +67,17 @@ export enum OWNERTYPE {
 
 // 武器类型
 export enum ARMSTYPE {
-    MELEE,    // 近战武器
-    RANGED,   // 远程武器
-    MAGIC,     // 魔法武器
+    MELEE = "MELEE",    // 近战武器
+    RANGED = "RANGED",   // 远程武器
+    MAGIC = "RANGED",     // 魔法武器
 }
 
 // 攻击方式
 export enum ATTACKTYPE {
-    
+
+}
+
+// 游戏音效
+export enum GAMEAUDIO {
+    bubbleAudio = "bubbleAudio"
 }

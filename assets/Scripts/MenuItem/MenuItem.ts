@@ -15,6 +15,10 @@ export class MenuItem extends Component {
         this.node.on(NodeEventType.TOUCH_START, this.menuClick.bind(this))
     }
 
+    protected onDestroy() {
+        this.node.off(NodeEventType.TOUCH_START, this.menuClick.bind(this))
+    }
+
     update(deltaTime: number) {
         const activeNode = this.node.getChildByName("MenuActive")
         if (this.menu !== Menu.Instance.menuActive) {

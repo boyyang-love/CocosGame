@@ -1,0 +1,40 @@
+[
+    {
+        "id": 1001,
+        "name": "青霜",
+        "icon": "ArmsIcon/Sword",
+        "desc": "此剑之剑光青凛若霜雪，故名。佩戴者暴击率增加5%",
+        "prefab": "Prefab/Arms/Sword",
+        "armsType": "MELEE",
+        "effectType": "AttackAttr",
+        "effects": {
+            "critRate": 0.05
+        }
+    },
+    {
+        "id": 1002,
+        "name": "火焰飞弹",
+        "icon": "ArmsIcon/FireBall",
+        "desc": "发射火焰飞弹",
+        "prefab": "Prefab/Arms/FireBall",
+        "armsType": "RANGED",
+        "effectType": "AttackAttr",
+        "effects": {
+            "attackPower": 10,
+            "critRate": 0.01
+        }
+    },
+    {
+        "id": 1003,
+        "name": "火蝶",
+        "icon": "ArmsIcon/FireBall",
+        "desc": "发射火焰蝴蝶",
+        "prefab": "Prefab/Arms/FireBall",
+        "armsType": "RANGED",
+        "effectType": "AttackAttr",
+        "effects": {
+            "attackPower": 10,
+            "critRate": 0.01
+        }
+    }
+]

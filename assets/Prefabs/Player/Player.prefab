@@ -278,6 +278,10 @@
     "__prefab": {
       "__id__": 15
     },
+    "expAudioClip": {
+      "__uuid__": "54bc39d8-7fef-4da9-80f2-e519b30c69f8",
+      "__expectedType__": "cc.AudioClip"
+    },
     "_id": ""
   },
   {

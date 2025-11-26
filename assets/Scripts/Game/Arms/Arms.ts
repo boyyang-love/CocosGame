@@ -11,7 +11,7 @@ export class Arms extends Component {
     // 武器拥有者
     public ownerType: OWNERTYPE = null
     // 武器类型
-    public armsType: ARMSTYPE = null
+    public armsType: ARMSTYPE = ARMSTYPE.MELEE
     // 武器伤害参数
     public attackAttr: AttackAttr = new AttackAttr()
 
@@ -57,7 +57,7 @@ export class Arms extends Component {
     }
 
     destroyArm() {
-        if (this.armsType === ARMSTYPE.MAGIC || this.armsType === ARMSTYPE.RANGED) {
+        if (this.armsType === ARMSTYPE.MAGIC) {
             if (this.node.isValid) {
                 this.node.destroy()
             }

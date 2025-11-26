@@ -1,4 +1,4 @@
-import { _decorator, Camera, Component, instantiate, Label, Node, Prefab } from 'cc'
+import { _decorator, AudioClip, Camera, Component, instantiate, Label, Node, Prefab } from 'cc'
 import { AttackAttr } from '../Attack/AttackAttr'
 import { DefenseAttr } from '../Attack/DefenseAttr'
 import { DamageCalculator } from '../Attack/DamageCalculator'
@@ -6,36 +6,41 @@ import { ResourceManager } from '../Framework/Managers/ResourceManager'
 import { Pop } from '../../Pop/Pop'
 import { PlayerStateManager } from './PlayerStateManager'
 import { HPTYPE } from '../../Constant/Enum'
+import { SkillPanel } from '../SkillPanel/SkillPanel'
+import AudioPoolManager from '../Framework/Managers/AudioPoolManager'
 const { ccclass, property } = _decorator
 
 @ccclass('PlayerManager')
 export class PlayerManager extends Component {
+    @property(AudioClip)
+    expAudioClip: AudioClip = null
     // HP
     private HP: number = 100
     // 攻击
-    public attackAttr: AttackAttr = new AttackAttr()
+    public attackAttr: AttackAttr = PlayerStateManager.Instance.attackAttr
     // 防御
-    public defenseAttr: DefenseAttr = new DefenseAttr()
+    public defenseAttr: DefenseAttr = PlayerStateManager.Instance.defenseAttr
+    // 技能
+    public skills: [] = []
 
     protected onLoad() {
+        
     }
 
     start() {
-
     }
 
     update(deltaTime: number) {
-        
+
     }
 
     // 被攻击时调用（由攻击方触发，如玩家子弹碰撞）
     public takeDamage(attackerAttr: AttackAttr) {
         // 计算伤害
-        const { damage, isCrit } = DamageCalculator.calculateFinalDamage(attackerAttr, this.defenseAttr)
+        const { totalDamage, isCrit } = DamageCalculator.calculateFinalDamage(attackerAttr, this.defenseAttr)
 
         // 应用伤害（扣除生命值等）
-        this.reduceHealth(damage, isCrit)
-
+        this.reduceHealth(totalDamage, isCrit)
     }
 
     private reduceHealth(damage: number, isCrit: boolean) {
@@ -44,7 +49,7 @@ export class PlayerManager extends Component {
             const boomNode = instantiate(prefab)
             this.node.addChild(boomNode)
             boomNode.setWorldPosition(this.node.getWorldPosition())
-
+            
             this.scheduleOnce(() => {
                 if (boomNode.isValid) {
                     boomNode.destroy()
@@ -89,6 +94,9 @@ export class PlayerManager extends Component {
 
     public setExp(exp: number) {
         PlayerStateManager.Instance.setEXP(exp)
+        if(this.expAudioClip){
+            AudioPoolManager.getInstance().playAudio(this.expAudioClip, 1)
+        }
     }
 }
 

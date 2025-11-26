@@ -5,6 +5,8 @@ import { AttackAttr } from '../Game/Attack/AttackAttr'
 import { AutoAttack } from '../Game/Attack/AutoAttack'
 import { EnemyMove } from '../Game/Move/EnemyMove'
 import { CameraFollow2D } from '../Game/Framework/Managers/CameraFollow2D'
+import { SkillConfigManager } from '../Game/Framework/Managers/SkillConfigManager'
+import { PlayerStateManager } from '../Game/GameManager/PlayerStateManager'
 const { ccclass, property } = _decorator
 
 @ccclass('CreateEnemys')
@@ -18,6 +20,7 @@ export class CreateEnemys extends Component {
 
     start() {
         this.initGameScene()
+        SkillConfigManager.Instance.loadSkillConfig()
     }
 
     update(deltaTime: number) {
@@ -42,7 +45,7 @@ export class CreateEnemys extends Component {
         autoAttackScript.armsCount = 10
         autoAttackScript.armsPrefab = armsPrefab
         autoAttackScript.armsType = ARMSTYPE.MELEE
-        autoAttackScript.attackAttr = new AttackAttr()
+        autoAttackScript.attackAttr = PlayerStateManager.Instance.attackAttr
         autoAttackScript.attackSpeed = 50
         autoAttackScript.attackRange = 100
 
@@ -54,8 +57,6 @@ export class CreateEnemys extends Component {
         const cameraNode = this.node.getChildByName("Camera")
 
         const cameraScript = cameraNode.getComponent(CameraFollow2D)
-
-        console.log(`${cameraNode}----`)
 
         if (cameraScript) {
             cameraScript.target = this.player
@@ -79,7 +80,8 @@ export class CreateEnemys extends Component {
             spiderAutoAttackScript.attackAngle = 90
             spiderAutoAttackScript.armsPrefab = armsPrefab
             spiderAutoAttackScript.attackAttr = new AttackAttr({
-                baseDamage: 1
+                basePhysicalDamage: 10,
+                baseMagicDamage: 15,
             })
             spiderAutoAttackScript.armsOwner = OWNERTYPE.ENEMY
             spiderAutoAttackScript.armsType = ARMSTYPE.RANGED

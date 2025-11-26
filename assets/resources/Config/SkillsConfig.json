@@ -1,24 +1,67 @@
 [
 	{
-		"skillId": 1001, 
-		"name": "烈焰", 
-		"desc": "对敌方造成大量伤害",
-		"icon": "textures/skills/lightning", 
-		"maxLevel": 5,
-		"levels": [
-			{
-				"damage": 100,
-				"cd": 3,
-				"mpCost": 20
-			}, 
-			{
-				"damage": 150,
-				"cd": 2.8,
-				"mpCost": 25
-			} 
-		],
-		"castAnim": "CircleFire", 
-		"effectPrefab": "Skills/CircleFire", 
-		"sound": "sounds/lightning"
+		"id": 1001,
+		"name": "复苏回响",
+		"desc": "恢复20点生命值",
+		"icon": "textures/skills/lightning",
+		"effectType": "HP",
+		"effects": {
+			"HP": 20
+		}
+	},
+	{
+		"id": 1002,
+		"name": "圣光裁决",
+		"desc": "增加10点基础攻击力, 5点基础魔法伤害",
+		"icon": "textures/skills/lightning",
+		"effectType": "AttackAttr",
+		"effects": {
+			"basePhysicalDamage": 10,
+			"baseMagicDamage": 0,
+			"physicalAttackPower": 5,
+			"magicAttackPower": 0,
+			"critRate": 0,
+			"critDamage": 0,
+			"physicalDamageBoost": 0,
+			"magicDamageBoost": 0,
+			"extraPhysicalDamage": 0,
+			"extraMagicDamage": 0
+		}
+	},
+	{
+		"id": 1003,
+		"name": "风息守护",
+		"desc": "增加10点基础防御力，10点魔法防御",
+		"icon": "textures/skills/lightning",
+		"effectType": "DefenseAttr",
+		"effects": {
+			"basePhysicalDefense": 10,
+			"baseMagicDefense": 0,
+			"physicalDefenseBoost": 0,
+			"magicDefenseBoost": 10,
+			"extraPhysicalDefense": 0,
+			"extraMagicDamage": 0,
+			"physicalDamageReduction": 0,
+			"magicDamageReduction": 0
+		}
+	},
+	{
+		"id": 1004,
+		"name": "影刃瞬杀",
+		"desc": "暴击提高5%",
+		"icon": "textures/skills/lightning",
+		"effectType": "AttackAttr",
+		"effects": {
+			"basePhysicalDamage": 0,
+			"baseMagicDamage": 0,
+			"physicalAttackPower": 0,
+			"magicAttackPower": 0,
+			"critRate": 0.05,
+			"critDamage": 0,
+			"physicalDamageBoost": 0,
+			"magicDamageBoost": 0,
+			"extraPhysicalDamage": 0,
+			"extraMagicDamage": 0
+		}
 	}
 ]

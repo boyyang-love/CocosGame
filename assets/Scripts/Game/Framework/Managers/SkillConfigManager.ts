@@ -1,44 +1,30 @@
+import { Skill } from './../../../../Types/SkillConfig';
 import { Asset, assetManager, Component, JsonAsset, resources } from "cc"
 // SkillConfig.ts
-export interface SkillLevelData {
-    damage: number       // 伤害
-    cd: number           // 冷却时间（秒）
-    mpCost: number       // 法力消耗
-}
-
-export interface SkillConfig {
-    skillId: number
-    name: string
-    icon: string
-    maxLevel: number
-    levels: SkillLevelData[]
-    castAnim: string
-    effectPrefab: string
-    sound: string
-}
-
 // 技能配置管理器
 export class SkillConfigManager extends Component {
     public static Instance: SkillConfigManager = null
-    private configMap: Map<number, SkillConfig> = new Map() // skillId -> 配置
+    private configMap = new Map<number, Skill.SkillConfig>() // skillId -> 配置
+    public skillId = new Set<number>()
 
     public Init() {
         if (SkillConfigManager.Instance === null) {
-            SkillConfigManager.Instance = new SkillConfigManager()
+            SkillConfigManager.Instance = this
         }else{
             SkillConfigManager.Instance = this
         }
     }
 
     // 加载配置表
-    loadSkillConfig():Promise<SkillConfig[]> {
+    loadSkillConfig():Promise<Skill.SkillConfig[]> {
         return new Promise((resolve, reject) =>  {
             resources.load("Config/SkillsConfig", (err, data: JsonAsset) => {
                 if (!err) {
-                    (data.json as unknown as SkillConfig[]).forEach(skill => {
-                        this.configMap.set(skill.skillId, skill)
+                    (data.json as unknown as Skill.SkillConfig[]).forEach(skill => {
+                        this.configMap.set(skill.id, skill)
+                        this.skillId.add(skill.id)
                     })
-                    resolve(data.json as unknown as SkillConfig[])
+                    resolve(data.json as unknown as Skill.SkillConfig[])
                 }else{
                     reject(err)
                 }
@@ -47,11 +33,10 @@ export class SkillConfigManager extends Component {
     }
 
     // 获取技能配置（指定等级）
-    getSkillConfig(skillId: number, level: number = 1): SkillLevelData & SkillConfig {
+    getSkillConfig(skillId: number): Skill.SkillConfig {
         const baseConfig = this.configMap.get(skillId)
         if (!baseConfig) throw new Error(`技能 ${skillId} 配置不存在`)
-        const levelConfig = baseConfig.levels[level - 1] || baseConfig.levels[0] // 默认为1级
-        return { ...baseConfig, ...levelConfig }
+        return { ...baseConfig }
     }
 }
 

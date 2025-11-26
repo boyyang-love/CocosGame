@@ -1,15 +1,16 @@
-import { _decorator, Collider2D, Component, Contact2DType, IPhysics2DContact, Node, RigidBody2D, Vec2, Vec3 } from 'cc'
+import { _decorator, AudioClip, Collider2D, Component, Contact2DType, IPhysics2DContact, Node, RigidBody2D, Vec2, Vec3 } from 'cc'
 import { PHY_GRPUP } from '../../Constant/Enum'
-import { PlayerManager } from '../GameManager/PlayerManager'
+import { PlayerManager,  } from '../GameManager/PlayerManager'
+import AudioPoolManager from '../Framework/Managers/AudioPoolManager'
 const { ccclass, property } = _decorator
 
 @ccclass('Exp')
 export class Exp extends Component {
+    @property(AudioClip)
+    bubbleAudio: AudioClip = null
+
     // enemy 刚体
     private rigidBody: RigidBody2D = null
-
-    // 追踪方向
-    private moveDir: Vec2 = new Vec2()
 
     protected onLoad() {
         // 获取刚体组件
@@ -55,12 +56,13 @@ export class Exp extends Component {
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
         // 只在两个碰撞体开始接触时被调用一次
         if (otherCollider.group === PHY_GRPUP.PLAYER) {
-            console.log(`吸收经验`)
             this.scheduleOnce(() => {
                 this.rigidBody.enabled = false
                 const playerManagerScript = otherCollider.getComponent(PlayerManager)
-                playerManagerScript.setExp(10)
-                this.node.destroy()
+                playerManagerScript.setExp(100)
+                this.schedule(() => {
+                    this.node.destroy()
+                }, 2)
             })
         }
     }

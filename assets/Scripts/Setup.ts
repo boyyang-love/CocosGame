@@ -1,7 +1,6 @@
 import { _decorator, Component, director, Node, SpriteFrame } from 'cc';
 import { GameApp } from './Game/GameApp'
-import { ResourceManager } from './Game/Framework/Managers/ResourceManager'
-const { ccclass, property } = _decorator;
+const { ccclass } = _decorator;
 
 @ccclass('Setup')
 export class Setup extends Component {

@@ -4,7 +4,6 @@ import { AttackAttr } from '../Attack/AttackAttr'
 import { DamageCalculator } from '../Attack/DamageCalculator'
 import { ResourceManager } from '../Framework/Managers/ResourceManager'
 import { Pop } from '../../Pop/Pop'
-import { Exp } from '../Exp/Exp'
 const { ccclass, property } = _decorator
 
 @ccclass('EnemyManager')
@@ -28,10 +27,10 @@ export class EnemyManager extends Component {
     // 被攻击时调用（由攻击方触发，如玩家子弹碰撞）
     public takeDamage(attackerAttr: AttackAttr) {
         // 计算伤害
-        const { damage, isCrit } = DamageCalculator.calculateFinalDamage(attackerAttr, this.defenseAttr)
+        const { totalDamage, isCrit } = DamageCalculator.calculateFinalDamage(attackerAttr, this.defenseAttr)
 
         // 应用伤害（扣除生命值等）
-        this.reduceHealth(damage, isCrit)
+        this.reduceHealth(totalDamage, isCrit)
     }
 
     async reduceHealth(damage: number, isCrit: boolean) {
@@ -39,7 +38,7 @@ export class EnemyManager extends Component {
         this.HP = this.HP - damage
         if (this.HP <= 0) {
             const rigidBody = this.getComponent(RigidBody2D)
-            if(rigidBody){
+            if (rigidBody) {
                 rigidBody.enabled = false
             }
             this.createExpNode()
@@ -68,10 +67,14 @@ export class EnemyManager extends Component {
     async createExpNode() {
         const expPrefab = await ResourceManager.Instance.AwaitGetAsset("Prefabs", "Effects/BoomPink", Prefab)
         const expNode = instantiate(expPrefab)
-        this.node.parent.addChild(expNode)
-        expNode.setWorldPosition(this.node.getWorldPosition())
+        if (this.node.parent) {
+            this.node.parent.addChild(expNode)
+            expNode.setWorldPosition(this.node.getWorldPosition())
+        }
 
-        this.node.destroy()
+        this.scheduleOnce(() => {
+            this.node.destroy()
+        }, 1)
     }
 
 }
