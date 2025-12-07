@@ -61,8 +61,8 @@ export enum PHY_GRPUP {
 
 // 武器拥有者
 export enum OWNERTYPE {
-    PLAYER,
-    ENEMY
+    PLAYER = "PLAYER",
+    ENEMY = "ENEMY"
 }
 
 // 武器类型
@@ -73,11 +73,18 @@ export enum ARMSTYPE {
 }
 
 // 攻击方式
-export enum ATTACKTYPE {
-
+export enum ATTACKMETHOD {
+    CIRCLE = "CIRCLE",
+    SHOOT = "SHOOT",
+    MAGIC = "MAGIC"
 }
 
 // 游戏音效
 export enum GAMEAUDIO {
     bubbleAudio = "bubbleAudio"
+}
+
+// 事件监听
+export enum CUSTOMEVENTNAME{
+    SKILLCHANGE,
 }

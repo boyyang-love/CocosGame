@@ -1,0 +1,65 @@
+[
+	{
+		"id": 1001,
+		"name": "青霜",
+		"icon": "ArmsIcon/icon_01",
+		"desc": "一把剑围绕",
+		"prefab": "Arms/Sword_02",
+		"effectPrefab": "Effects/Boom",
+		"sound": "Audio/fireSound",
+		"attackMethod": "circle",
+		"armsOwner": "",
+		"armsType": "MELEE",
+		"armsProp": {
+			"attackRange": 50,
+			"attackSpeed": 100,
+			"attackAngle": 60,
+			"attackSpace": 5,
+			"bulletSpace": 0.1,
+			"armsCount": 5,
+			"armsLifeTime": 3
+		}
+	},
+	{
+		"id": 1002,
+		"name": "火焰飞弹",
+		"icon": "ArmsIcon/icon_02",
+		"desc": "向前发射火焰飞弹",
+		"prefab": "Arms/FireBall",
+		"effectPrefab": "Effects/Boom",
+		"sound": "Audio/fireSound",
+		"attackMethod": "shoot",
+		"armsOwner": "",
+		"armsType": "RANGED",
+		"armsProp": {
+			"attackRange": 500,
+			"attackSpeed": 15,
+			"attackAngle": 60,
+			"attackSpace": 3,
+			"bulletSpace": 0.1,
+			"armsCount": 3,
+			"armsLifeTime": 4
+		}
+	},
+	{
+		"id": 1003,
+		"name": "火蝶",
+		"icon": "ArmsIcon/icon_03",
+		"desc": "向前发射火焰蝴蝶",
+		"prefab": "Arms/FireBall",
+		"effectPrefab": "Effects/Boom",
+		"sound": "Audio/fireSound",
+		"attackMethod": "magic",
+		"armsOwner": "",
+		"armsType": "RANGED",
+		"armsProp": {
+			"attackRange": 300,
+			"attackSpeed": 5,
+			"attackAngle": 60,
+			"attackSpace": 4,
+			"bulletSpace": 0.1,
+			"armsCount": 1,
+			"armsLifeTime": 4
+		}
+	}
+]

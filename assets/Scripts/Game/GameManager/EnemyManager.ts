@@ -4,6 +4,7 @@ import { AttackAttr } from '../Attack/AttackAttr'
 import { DamageCalculator } from '../Attack/DamageCalculator'
 import { ResourceManager } from '../Framework/Managers/ResourceManager'
 import { Pop } from '../../Pop/Pop'
+import { EnemyStoreManager } from './EnemyStoreManager'
 const { ccclass, property } = _decorator
 
 @ccclass('EnemyManager')
@@ -11,6 +12,14 @@ export class EnemyManager extends Component {
     private HP: number = 1000
     private defenseAttr: DefenseAttr = new DefenseAttr()
     public attackAttr: AttackAttr = new AttackAttr()
+
+    protected onLoad() {
+        EnemyStoreManager.getInstance().addEnemy(this.node)
+    }
+
+    protected onDestroy() {
+        EnemyStoreManager.getInstance().removeEnemy(this.node)
+    }
 
     start() {
 
@@ -49,17 +58,21 @@ export class EnemyManager extends Component {
 
     setPop(damage: number, isCrit: boolean) {
         ResourceManager.Instance.AwaitGetAsset("Prefabs", "Pop/pop", Prefab).then((Prefab) => {
-            const popPrefab = instantiate(Prefab)
+            const popNode = instantiate(Prefab)
             // 是否暴击
             if (isCrit) {
-                const labelNode = popPrefab.getChildByName("Label")
+                const labelNode = popNode.getChildByName("Label")
                 const label = labelNode.getComponent(Label)
                 label.enableOutline = true
             }
-            this.node.addChild(popPrefab)
-            const popScript = popPrefab.getComponent(Pop)
+            this.node.addChild(popNode)
+            const popScript = popNode.getComponent(Pop)
             popScript.setValue(damage)
-            popPrefab.setWorldPosition(this.node.worldPosition)
+            popNode.setWorldPosition(this.node.worldPosition)
+
+            setTimeout(() => {
+                popNode.destroy()
+            }, 2000)
 
         })
     }
@@ -76,6 +89,4 @@ export class EnemyManager extends Component {
             this.node.destroy()
         }, 1)
     }
-
 }
-

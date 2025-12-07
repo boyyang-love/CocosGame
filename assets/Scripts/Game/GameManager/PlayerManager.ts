@@ -1,43 +1,37 @@
-import { _decorator, AudioClip, Camera, Component, instantiate, Label, Node, Prefab } from 'cc'
+import { _decorator, AudioClip, Camera, Component, instantiate, Label, Node, Prefab, EventTarget } from 'cc'
 import { AttackAttr } from '../Attack/AttackAttr'
 import { DefenseAttr } from '../Attack/DefenseAttr'
 import { DamageCalculator } from '../Attack/DamageCalculator'
 import { ResourceManager } from '../Framework/Managers/ResourceManager'
 import { Pop } from '../../Pop/Pop'
 import { PlayerStateManager } from './PlayerStateManager'
-import { HPTYPE } from '../../Constant/Enum'
-import { SkillPanel } from '../SkillPanel/SkillPanel'
+import { HPTYPE, OWNERTYPE } from '../../Constant/Enum'
 import AudioPoolManager from '../Framework/Managers/AudioPoolManager'
+import { CastSkill } from '../Attack/CastSkill'
+import { SkillManager } from './SkillManager'
 const { ccclass, property } = _decorator
 
 @ccclass('PlayerManager')
 export class PlayerManager extends Component {
+    public static Instance: PlayerManager = null
+
     @property(AudioClip)
     expAudioClip: AudioClip = null
-    // HP
-    private HP: number = 100
-    // 攻击
-    public attackAttr: AttackAttr = PlayerStateManager.Instance.attackAttr
-    // 防御
-    public defenseAttr: DefenseAttr = PlayerStateManager.Instance.defenseAttr
-    // 技能
-    public skills: [] = []
+
+    private skills: Map<number, CastSkill> = new Map()
 
     protected onLoad() {
-        
-    }
-
-    start() {
-    }
-
-    update(deltaTime: number) {
-
+        if (PlayerManager.Instance === null) {
+            PlayerManager.Instance = this
+        } else {
+            this.destroy
+        }
     }
 
     // 被攻击时调用（由攻击方触发，如玩家子弹碰撞）
     public takeDamage(attackerAttr: AttackAttr) {
         // 计算伤害
-        const { totalDamage, isCrit } = DamageCalculator.calculateFinalDamage(attackerAttr, this.defenseAttr)
+        const { totalDamage, isCrit } = DamageCalculator.calculateFinalDamage(attackerAttr, PlayerStateManager.Instance.defenseAttr)
 
         // 应用伤害（扣除生命值等）
         this.reduceHealth(totalDamage, isCrit)
@@ -49,7 +43,7 @@ export class PlayerManager extends Component {
             const boomNode = instantiate(prefab)
             this.node.addChild(boomNode)
             boomNode.setWorldPosition(this.node.getWorldPosition())
-            
+
             this.scheduleOnce(() => {
                 if (boomNode.isValid) {
                     boomNode.destroy()
@@ -59,44 +53,54 @@ export class PlayerManager extends Component {
 
         PlayerStateManager.Instance.setHp(-damage, HPTYPE.HP)
 
-        ResourceManager.Instance.AwaitGetAsset("Prefabs", "Effects/Boom", Prefab).then((prefab) => {
-            const boomNode = instantiate(prefab)
-            this.node.addChild(boomNode)
-            boomNode.setWorldPosition(this.node.getWorldPosition())
-
-            this.scheduleOnce(() => {
-                if (boomNode.isValid) {
-                    boomNode.destroy()
-                }
-            }, 2)
-        })
+        this.setPop(damage, isCrit)
     }
 
     private setPop(damage: number, isCrit: boolean) {
         ResourceManager.Instance.AwaitGetAsset("Prefabs", "Pop/pop", Prefab).then((Prefab) => {
-            const popPrefab = instantiate(Prefab)
+            const popNode = instantiate(Prefab)
             // 是否暴击
             if (isCrit) {
-                const labelNode = popPrefab.getChildByName("Label")
+                const labelNode = popNode.getChildByName("Label")
                 const label = labelNode.getComponent(Label)
                 label.enableOutline = true
             }
-            this.node.addChild(popPrefab)
-            const popScript = popPrefab.getComponent(Pop)
+            this.node.addChild(popNode)
+            const popScript = popNode.getComponent(Pop)
             popScript.setValue(damage)
-            popPrefab.setWorldPosition(this.node.worldPosition)
+            popNode.setWorldPosition(this.node.worldPosition)
 
-            setTimeout(() => {
-                popPrefab.destroy()
-            }, 3000)
+            this.scheduleOnce(() => {
+                popNode.destroy()
+            }, 2)
         })
     }
 
     public setExp(exp: number) {
         PlayerStateManager.Instance.setEXP(exp)
-        if(this.expAudioClip){
+        if (this.expAudioClip) {
             AudioPoolManager.getInstance().playAudio(this.expAudioClip, 1)
         }
+    }
+
+    public mountSkill(id: number) {
+        const castSkillScript = this.node.addComponent(CastSkill)
+        this.skills.set(id, castSkillScript)
+        const skillInfo = SkillManager.getInstance().getSkillConfigInfoById(id)
+        skillInfo.armsOwner = OWNERTYPE.PLAYER
+        PlayerStateManager.Instance.setSkill(skillInfo)
+    }
+
+    public unMountSkill(id: number) {
+        const castSkillScript = this.skills.get(id)
+        castSkillScript.destroy()
+        this.skills.delete(id)
+        PlayerStateManager.Instance.delSkill(id)
+    }
+
+    public castSkill(id: number) {
+        const castSkillScript = this.skills.get(id)
+        castSkillScript.castSkill(id)
     }
 }
 

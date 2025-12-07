@@ -40,13 +40,10 @@
       },
       {
         "__id__": 14
-      },
-      {
-        "__id__": 16
       }
     ],
     "_prefab": {
-      "__id__": 18
+      "__id__": 16
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -270,38 +267,6 @@
     "fileId": "85spw23zZMFII6H9MaQZo8"
   },
   {
-    "__type__": "e1e15UlcSVCSJcDhV4jjNGy",
-    "_name": "",
-    "_objFlags": 0,
-    "__editorExtras__": {},
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "__prefab": {
-      "__id__": 15
-    },
-    "attackTarget": null,
-    "attackRange": 100,
-    "attackSpeed": 200,
-    "attackAngle": 90,
-    "attackSpace": 2,
-    "bulletSpace": 0.5,
-    "armsCount": 2,
-    "armsType": 1,
-    "armsPrefab": {
-      "__uuid__": "3382cac2-26e2-44e8-90cb-e3b8f6080ce1",
-      "__expectedType__": "cc.Prefab"
-    },
-    "armsOwner": 0,
-    "armsLifeTime": 4,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.CompPrefabInfo",
-    "fileId": "afbc3nCDJBgrw8XP5ff77u"
-  },
-  {
     "__type__": "63d68NABgNLQo7YiaGclTjd",
     "_name": "",
     "_objFlags": 0,
@@ -311,7 +276,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 17
+      "__id__": 15
     },
     "_id": ""
   },

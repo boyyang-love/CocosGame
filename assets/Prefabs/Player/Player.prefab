@@ -40,13 +40,10 @@
       },
       {
         "__id__": 14
-      },
-      {
-        "__id__": 16
       }
     ],
     "_prefab": {
-      "__id__": 18
+      "__id__": 16
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -286,27 +283,7 @@
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "66wh0fIaFMsaBr4/LBudGO"
-  },
-  {
-    "__type__": "e1e15UlcSVCSJcDhV4jjNGy",
-    "_name": "",
-    "_objFlags": 0,
-    "__editorExtras__": {},
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "__prefab": {
-      "__id__": 17
-    },
-    "attackTargetNode": null,
-    "armsPrefab": null,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.CompPrefabInfo",
-    "fileId": "8agNc5IjZISaEUUn2krl8M"
+    "fileId": "d5PpulDJ5IHZ5hqOgN/1IR"
   },
   {
     "__type__": "cc.PrefabInfo",

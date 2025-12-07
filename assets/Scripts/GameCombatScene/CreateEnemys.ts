@@ -5,8 +5,9 @@ import { AttackAttr } from '../Game/Attack/AttackAttr'
 import { AutoAttack } from '../Game/Attack/AutoAttack'
 import { EnemyMove } from '../Game/Move/EnemyMove'
 import { CameraFollow2D } from '../Game/Framework/Managers/CameraFollow2D'
-import { SkillConfigManager } from '../Game/Framework/Managers/SkillConfigManager'
 import { PlayerStateManager } from '../Game/GameManager/PlayerStateManager'
+import { SkillManager } from '../Game/GameManager/SkillManager'
+import { PlayerManager } from '../Game/GameManager/PlayerManager'
 const { ccclass, property } = _decorator
 
 @ccclass('CreateEnemys')
@@ -20,7 +21,6 @@ export class CreateEnemys extends Component {
 
     start() {
         this.initGameScene()
-        SkillConfigManager.Instance.loadSkillConfig()
     }
 
     update(deltaTime: number) {
@@ -35,25 +35,13 @@ export class CreateEnemys extends Component {
 
     async initPlayer() {
         const playerPrefab = await ResourceManager.Instance.AwaitGetAsset("Prefabs", "Player/Player", Prefab)
-        const armsPrefab = await ResourceManager.Instance.AwaitGetAsset("Prefabs", "Arms/Sword", Prefab)
-
         const playerNode = instantiate(playerPrefab)
-
-        const autoAttackScript = playerNode.getComponent(AutoAttack)
-
-        autoAttackScript.armsOwner = OWNERTYPE.PLAYER
-        autoAttackScript.armsCount = 10
-        autoAttackScript.armsPrefab = armsPrefab
-        autoAttackScript.armsType = ARMSTYPE.MELEE
-        autoAttackScript.attackAttr = PlayerStateManager.Instance.attackAttr
-        autoAttackScript.attackSpeed = 50
-        autoAttackScript.attackRange = 100
 
         this.node.addChild(playerNode)
         playerNode.setWorldPosition(new Vec3(500, 500, 0))
 
         this.player = playerNode
-
+        PlayerStateManager.Instance.PlayerNode = playerNode
         const cameraNode = this.node.getChildByName("Camera")
 
         const cameraScript = cameraNode.getComponent(CameraFollow2D)
@@ -62,32 +50,31 @@ export class CreateEnemys extends Component {
             cameraScript.target = this.player
         }
 
+        // PlayerManager.Instance.mountSkill(1001)
+        PlayerManager.Instance.mountSkill(1002)
+
     }
 
     async initEnemy() {
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 50; i++) {
             const spiderPrefab = await ResourceManager.Instance.AwaitGetAsset("Prefabs", "NPC/Spider", Prefab)
-            const armsPrefab = await ResourceManager.Instance.AwaitGetAsset("Prefabs", "Arms/FireBall", Prefab)
             const spiderNode = instantiate(spiderPrefab)
 
             const enemyMoveScript = spiderNode.getComponent(EnemyMove)
             enemyMoveScript.targetNode = this.player
             enemyMoveScript.attackRange = 150
-
+            
             // 设置攻击相关行为
-            const spiderAutoAttackScript = spiderNode.getComponent(AutoAttack)
-            spiderAutoAttackScript.armsCount = 1
-            spiderAutoAttackScript.attackAngle = 90
-            spiderAutoAttackScript.armsPrefab = armsPrefab
-            spiderAutoAttackScript.attackAttr = new AttackAttr({
-                basePhysicalDamage: 10,
-                baseMagicDamage: 15,
-            })
-            spiderAutoAttackScript.armsOwner = OWNERTYPE.ENEMY
-            spiderAutoAttackScript.armsType = ARMSTYPE.RANGED
-            spiderAutoAttackScript.attackSpeed = 5
-            spiderAutoAttackScript.attackRange = 200
-            spiderAutoAttackScript.attackTargetNode = this.player
+            // const spiderAutoAttackScript = spiderNode.getComponent(AutoAttack)
+            // const skillInfo = await SkillManager.getInstance().getSkillConfigInfoById(1002)
+            // skillInfo.armsOwner = OWNERTYPE.ENEMY
+            // skillInfo.armsProp.attackRange = 200
+            // spiderAutoAttackScript.skillConfig = skillInfo
+            // spiderAutoAttackScript.attackAttr = new AttackAttr({
+            //     basePhysicalDamage: 100,
+            //     baseMagicDamage: 15,
+            // })
+            // spiderAutoAttackScript.attackTargetNode = this.player
             spiderNode.setWorldPosition(new Vec3(300, 500, 0))
 
             this.node.addChild(spiderNode)

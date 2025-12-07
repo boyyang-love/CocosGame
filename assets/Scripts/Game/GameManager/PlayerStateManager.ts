@@ -1,12 +1,16 @@
-import { math } from "cc"
-import { HPTYPE } from "../../Constant/Enum"
+import { math, Node, Prefab, EventTarget } from "cc"
+import { ARMSTYPE, ATTACKMETHOD, CUSTOMEVENTNAME, HPTYPE, OWNERTYPE, } from "../../Constant/Enum"
 import { AttackAttr } from "../Attack/AttackAttr"
 import { DefenseAttr } from "../Attack/DefenseAttr"
-import { SkillConfigManager } from "../Framework/Managers/SkillConfigManager"
-import { SkillPanel } from "../SkillPanel/SkillPanel"
+import { SkillManager } from "./SkillManager"
+import { Panel } from "../Panel/Panel"
+import { Config } from 'db://assets/Types/Config'
+import { AutoAttack } from "../Attack/AutoAttack"
+import { EventManager } from "../Framework/Managers/EventManager"
 
 export class PlayerStateManager {
     public static Instance: PlayerStateManager = null
+    public PlayerNode: Node = null
     // 当前等级
     public Level: number = 0
     // 最大经验值
@@ -21,10 +25,13 @@ export class PlayerStateManager {
     public attackAttr: AttackAttr = new AttackAttr()
     // 防御
     public defenseAttr: DefenseAttr = new DefenseAttr()
+    // 技能列表
+    public skill: Config.SkillConfig[] = []
 
     public Init() {
         if (PlayerStateManager.Instance === null) {
             PlayerStateManager.Instance = new PlayerStateManager()
+            SkillManager.getInstance().loadConfigs()
         }
     }
 
@@ -33,13 +40,16 @@ export class PlayerStateManager {
         if (this.EXP > this.MaxEXP) {
             this.Level += 1
             this.EXP = this.EXP - this.MaxEXP
-            this.getSkill()
+            if (this.Level % 5 === 0) {
+                this.getSkill()
+            } else {
+                this.getProperty()
+            }
         }
     }
 
     public setHp(hp: number, type: HPTYPE) {
         if (type === HPTYPE.HP) {
-            console.log(`增加---${hp}`)
             this.HP = math.clamp(this.HP + hp, 0, this.MaxHP)
         }
 
@@ -48,13 +58,28 @@ export class PlayerStateManager {
         }
     }
 
-    public getSkill() {
-        const skillId = SkillConfigManager.Instance.skillId
-        const randomId = this.randomPickFromNumberSet(skillId, 3)
+    public getProperty() {
+        const ids = SkillManager.getInstance().propertyConfigsId
+        const randomId = this.randomPickFromNumberSet(ids)
         const infos = randomId.map(id => {
-            return SkillConfigManager.Instance.getSkillConfig(id)
+            return {
+                ...SkillManager.getInstance().getPropertyConfigInfoById(id)
+            }
         })
-        SkillPanel.Instance.setPanelCard(infos)
+
+        Panel.Instance.setPanelCard(infos)
+    }
+
+    public getSkill() {
+        const ids = SkillManager.getInstance().skillConfigsId
+        const randomId = this.randomPickFromNumberSet(ids)
+        const infos = randomId.map(id => {
+            return {
+                ...SkillManager.getInstance().getSkillConfigInfoById(id)
+            }
+        })
+
+        Panel.Instance.setSkillPanelCard(infos)
     }
 
     public setAttackAttr(key: string, valule: number) {
@@ -63,6 +88,24 @@ export class PlayerStateManager {
 
     public setDefenseAttr(key: string, valule: number) {
         this.defenseAttr[key] = Number((this.defenseAttr[key] + valule).toFixed(2))
+    }
+
+    public async setArms(info: Config.SkillConfig) {
+        if (this.PlayerNode) {
+            const autoAttackScript = this.PlayerNode.addComponent(AutoAttack)
+            info.armsOwner = OWNERTYPE.PLAYER
+            autoAttackScript.skillConfig = info
+        }
+    }
+
+    public setSkill(skill: Config.SkillConfig) {
+        this.skill.push(skill)
+        console.log(skill)
+        EventManager.instance.emit(CUSTOMEVENTNAME.SKILLCHANGE)
+    }
+
+    public delSkill(id: number) {
+        this.skill = this.skill.filter(s => s.id != id)
     }
 
     randomPickFromNumberSet(set: Set<number>, count: number = 3): number[] {
@@ -79,6 +122,5 @@ export class PlayerStateManager {
         // 返回前 count 个元素（已打乱且无重复）
         return arr.slice(0, count)
     }
-
 }
 

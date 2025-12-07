@@ -12,7 +12,7 @@ export class Exp extends Component {
     // enemy 刚体
     private rigidBody: RigidBody2D = null
 
-    protected onLoad() {
+    protected start() {
         // 获取刚体组件
         let rigidBody = this.getComponent(RigidBody2D)
         this.rigidBody = rigidBody

@@ -1,8 +1,7 @@
 import { _decorator, Component, director, Node } from 'cc'
-import { SkillsManager } from './GameManager/SkillsManager'
-import { SkillConfigManager } from './Framework/Managers/SkillConfigManager'
 import { ResourceManager } from './Framework/Managers/ResourceManager'
 import { PlayerStateManager } from './GameManager/PlayerStateManager'
+import { SkillManager } from './GameManager/SkillManager'
 
 export class GameApp extends Component {
     public static Instance: GameApp = null
@@ -20,10 +19,9 @@ export class GameApp extends Component {
     }
 
     InitGameManager() {
-        new SkillsManager().Init()
-        new SkillConfigManager().Init()
         new ResourceManager().Init()
         new PlayerStateManager().Init()
+        SkillManager.getInstance().loadConfigs()
     }
 
     public async EnterGame() {

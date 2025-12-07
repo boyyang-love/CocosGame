@@ -294,7 +294,7 @@
     "_priority": 0,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 360,
+    "_orthoHeight": 522.979683972912,
     "_near": 0,
     "_far": 2000,
     "_color": {
@@ -640,8 +640,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 51.47383090264783,
-      "height": 50.400000000000006
+      "width": 51.475347859057564,
+      "height": 50.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -673,7 +673,7 @@
     "_string": "妙",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 55.666666666666664,
+    "_actualFontSize": 55.375,
     "_fontSize": 40,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -775,8 +775,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 38.67536167898578,
-      "height": 50.400000000000006
+      "width": 38.67650430304741,
+      "height": 50.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -808,7 +808,7 @@
     "_string": "大",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 55.666666666666664,
+    "_actualFontSize": 55.375,
     "_fontSize": 40,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -910,8 +910,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 31.236257952844312,
-      "height": 50.400000000000006
+      "width": 31.237170217268623,
+      "height": 50.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -943,7 +943,7 @@
     "_string": "冒",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 55.666666666666664,
+    "_actualFontSize": 55.375,
     "_fontSize": 40,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1045,8 +1045,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 43.95473091902134,
-      "height": 50.400000000000006
+      "width": 43.95602602990971,
+      "height": 50.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1078,7 +1078,7 @@
     "_string": "险",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 55.666666666666664,
+    "_actualFontSize": 55.375,
     "_fontSize": 40,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1481,7 +1481,7 @@
     "_string": "开始游戏",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 69.58333333333333,
+    "_actualFontSize": 69.21875,
     "_fontSize": 50,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
