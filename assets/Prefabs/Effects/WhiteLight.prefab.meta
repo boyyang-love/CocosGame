@@ -2,12 +2,12 @@
   "ver": "1.1.50",
   "importer": "prefab",
   "imported": true,
-  "uuid": "9424d07c-cc2e-404c-9037-c9e08abf22e4",
+  "uuid": "10de5a39-c6d2-45af-9324-e808de3375fb",
   "files": [
     ".json"
   ],
   "subMetas": {},
   "userData": {
-    "syncNodeName": "FireBall"
+    "syncNodeName": "WhiteLight"
   }
 }

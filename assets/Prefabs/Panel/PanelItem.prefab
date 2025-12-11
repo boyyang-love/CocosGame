@@ -706,8 +706,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 107.97887894588501,
-      "height": 37.79999999999998
+      "width": 107.98816676436108,
+      "height": 37.800000000000004
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -745,7 +745,7 @@
     "_string": "复苏回响",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 41.578125,
+    "_actualFontSize": 39.984375,
     "_fontSize": 30,
     "_fontFamily": "Arial",
     "_lineHeight": 30,
@@ -805,9 +805,9 @@
     },
     "_alignFlags": 45,
     "_target": null,
-    "_left": 80.42456052705748,
-    "_right": 61.59656052705751,
-    "_top": 0.07179499999999868,
+    "_left": 80.41991661781944,
+    "_right": 61.59191661781948,
+    "_top": 0.07179499999999865,
     "_bottom": 333.48200000000054,
     "_horizontalCenter": 0,
     "_verticalCenter": 0,
@@ -945,7 +945,7 @@
     "_string": "生命最大值增加1%生命最大值增加1%",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 27.71875,
+    "_actualFontSize": 26.65625,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 30,
@@ -1027,8 +1027,8 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -10.735,
-      "y": -148.861,
+      "x": 0,
+      "y": -150,
       "z": 0
     },
     "_lrot": {
@@ -1068,8 +1068,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 44.9890343151071,
-      "height": 50.400000000000006
+      "width": 44.9995649545721,
+      "height": 50.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1107,7 +1107,7 @@
     "_string": "传说",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 34.6484375,
+    "_actualFontSize": 33.3203125,
     "_fontSize": 25,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1335,7 +1335,6 @@
     "rarityLabel": {
       "__id__": 43
     },
-    "id": 0,
     "_id": ""
   },
   {

@@ -99,7 +99,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -21.977,
+      "y": -7.581,
       "z": 0
     },
     "_lrot": {
@@ -228,10 +228,10 @@
       "__expectedType__": "cc.ParticleAsset"
     },
     "_spriteFrame": {
-      "__uuid__": "24c419ea-63a8-4ea1-a9d0-7fc469489bbc@f9941",
+      "__uuid__": "80caba1b-cce0-44df-a0d9-ab34d2c5dbb8@befd4",
       "__expectedType__": "cc.SpriteFrame"
     },
-    "_totalParticles": 5,
+    "_totalParticles": 100,
     "_startColor": {
       "__type__": "cc.Color",
       "r": 219,

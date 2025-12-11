@@ -1,9 +1,11 @@
 import { _decorator, Component, instantiate, Prefab, tween, Node } from 'cc'
 import { PlayerStateManager } from '../GameManager/PlayerStateManager'
-import { HPTYPE } from '../../Constant/Enum'
+import { ASSETPATH, HPTYPE } from '../../Constant/Enum'
 import { ResourceManager } from '../Framework/Managers/ResourceManager'
 import { PanelItem } from './PanelItem'
 import { Config } from 'db://assets/Types/Config'
+import { PlayerManager } from '../GameManager/PlayerManager'
+import { GameManager } from '../Framework/Managers/GameManager'
 const { ccclass, property } = _decorator
 
 @ccclass('Panel')
@@ -20,6 +22,8 @@ export class Panel extends Component {
     private lock: boolean = false
     private panelType: string = "property"
 
+    private panelItems: Map<string, Node> = new Map()
+
     protected onLoad() {
         if (Panel.Instance === null) {
             Panel.Instance = this
@@ -29,9 +33,7 @@ export class Panel extends Component {
     }
 
     start() {
-        this.node.on("panelClick", (_, id: number) => {
-            console.log(`点击-${id}`)
-        })
+
     }
 
     update(deltaTime: number) {
@@ -43,10 +45,14 @@ export class Panel extends Component {
             .to(0.5, {
                 y: 0,
             })
+            .call(() => {
+                GameManager.getInstance().pause()
+            })
             .start()
     }
 
     public close() {
+        GameManager.getInstance().play()
         tween(this.node)
             .to(0.5, {
                 y: 2000,
@@ -73,15 +79,24 @@ export class Panel extends Component {
 
                 const PanelItemsNode = this.node.getChildByName("PanelItems")
                 PanelItemsNode.removeAllChildren()
-                skillConfig.forEach(async config => {
+                this.panelItems.clear()
+                skillConfig.forEach(async (config, i) => {
                     const node = await this.createPanel(config.id, config.name, config.desc)
                     PanelItemsNode.addChild(node)
+                    const panelItemScript = node.getComponent(PanelItem)
+                    if (i === 0) {
+                        panelItemScript.setSelect(true)
+                    } else {
+                        panelItemScript.setSelect(false)
+                    }
+                    this.panelItems.set(node.uuid, node)
                 })
                 this.open()
             }
 
             return
         }
+
         if (this.propertyConfig.length) {
             if (!this.lock) {
                 this.lock = true
@@ -92,9 +107,17 @@ export class Panel extends Component {
 
                 const PanelItemsNode = this.node.getChildByName("PanelItems")
                 PanelItemsNode.removeAllChildren()
-                propertyConfig.forEach(async config => {
+                this.panelItems.clear()
+                propertyConfig.forEach(async (config, i) => {
                     const node = await this.createPanel(config.id, config.name, config.desc, config.rarity)
                     PanelItemsNode.addChild(node)
+                    const panelItemScript = node.getComponent(PanelItem)
+                    if (i === 0) {
+                        panelItemScript.setSelect(true)
+                    } else {
+                        panelItemScript.setSelect(false)
+                    }
+                    this.panelItems.set(node.uuid, node)
                 })
                 this.open()
             }
@@ -104,7 +127,7 @@ export class Panel extends Component {
     }
 
     buttonClick() {
-        if(this.panelType === "skill") {
+        if (this.panelType === "skill") {
             this.setSkill()
             return
         }
@@ -133,16 +156,24 @@ export class Panel extends Component {
             })
         }
 
+        if (propertyConfig.effectType === Config.effectType.SKILL) {
+            if (propertyConfig.skillId) {
+                const keys = Object.keys(propertyConfig.effects)
+                keys.forEach(key => {
+                    PlayerStateManager.Instance.setSkillProperty(propertyConfig.skillId, key, propertyConfig.effects[key])
+                })
+            }
+        }
+
         this.close()
         this.scheduleOnce(() => {
             this.lock = false
         }, 1)
     }
 
-    setSkill(){
+    setSkill() {
         const skillConfig = this.curSkillConfig.filter(c => c.id === this.id)[0]
-        console.log(skillConfig)
-        PlayerStateManager.Instance.setArms(skillConfig)
+        PlayerManager.Instance.mountSkill(skillConfig.id)
         this.close()
         this.scheduleOnce(() => {
             this.lock = false
@@ -150,13 +181,22 @@ export class Panel extends Component {
     }
 
     async createPanel(id: number, title: string, content: string, rarity?: string): Promise<Node> {
-        const panelItemPrefab = await ResourceManager.Instance.AwaitGetAsset("Prefabs", "Panel/PanelItem", Prefab)
+        const panelItemPrefab = await ResourceManager.Instance.AwaitGetAsset(ASSETPATH.PREFAB, "Panel/PanelItem", Prefab)
         const panelItemNode = instantiate(panelItemPrefab)
         const panelItemScript = panelItemNode.getComponent(PanelItem)
 
         panelItemScript.setItems(id, title, content, rarity)
 
         return panelItemNode
+    }
+
+    setChecked(id: string) {
+        this.panelItems.forEach((node, key) => {
+            if (key !== id) {
+                const panelItemScript = node.getComponent(PanelItem)
+                panelItemScript.setSelect(false)
+            }
+        })
     }
 }
 

@@ -1,17 +1,26 @@
-import { _decorator, Collider2D, Component, instantiate, Label, Node, Prefab, RigidBody2D } from 'cc'
+import { _decorator, Collider2D, Component, instantiate, Label, Node, Prefab, RigidBody2D, Vec2 } from 'cc'
 import { DefenseAttr } from '../Attack/DefenseAttr'
 import { AttackAttr } from '../Attack/AttackAttr'
 import { DamageCalculator } from '../Attack/DamageCalculator'
 import { ResourceManager } from '../Framework/Managers/ResourceManager'
 import { Pop } from '../../Pop/Pop'
 import { EnemyStoreManager } from './EnemyStoreManager'
+import { CastSkill } from '../Attack/CastSkill'
+import { SkillManager } from './SkillManager'
+import { ASSETPATH, OWNERTYPE } from '../../Constant/Enum'
+import { Config } from 'db://assets/Types/Config'
+import { PlayerManager } from './PlayerManager'
+import { PlayerStateManager } from './PlayerStateManager'
 const { ccclass, property } = _decorator
 
 @ccclass('EnemyManager')
 export class EnemyManager extends Component {
-    private HP: number = 1000
-    private defenseAttr: DefenseAttr = new DefenseAttr()
+    public HP: number = 1000
+    public defenseAttr: DefenseAttr = new DefenseAttr()
     public attackAttr: AttackAttr = new AttackAttr()
+
+    private skills: Map<number, CastSkill> = new Map()
+    private skillInfo: Config.SkillConfig[] = []
 
     protected onLoad() {
         EnemyStoreManager.getInstance().addEnemy(this.node)
@@ -19,6 +28,7 @@ export class EnemyManager extends Component {
 
     protected onDestroy() {
         EnemyStoreManager.getInstance().removeEnemy(this.node)
+        this.unscheduleAllCallbacks()
     }
 
     start() {
@@ -57,7 +67,7 @@ export class EnemyManager extends Component {
     }
 
     setPop(damage: number, isCrit: boolean) {
-        ResourceManager.Instance.AwaitGetAsset("Prefabs", "Pop/pop", Prefab).then((Prefab) => {
+        ResourceManager.Instance.AwaitGetAsset(ASSETPATH.PREFAB, "Pop/pop", Prefab).then((Prefab) => {
             const popNode = instantiate(Prefab)
             // 是否暴击
             if (isCrit) {
@@ -78,7 +88,7 @@ export class EnemyManager extends Component {
     }
 
     async createExpNode() {
-        const expPrefab = await ResourceManager.Instance.AwaitGetAsset("Prefabs", "Effects/BoomPink", Prefab)
+        const expPrefab = await ResourceManager.Instance.AwaitGetAsset(ASSETPATH.PREFAB, "Effects/BoomPink", Prefab)
         const expNode = instantiate(expPrefab)
         if (this.node.parent) {
             this.node.parent.addChild(expNode)
@@ -88,5 +98,38 @@ export class EnemyManager extends Component {
         this.scheduleOnce(() => {
             this.node.destroy()
         }, 1)
+    }
+
+    public mountSkill(id: number) {
+        const castSkillScript = this.node.addComponent(CastSkill)
+        this.skills.set(id, castSkillScript)
+        const skillInfo = SkillManager.getInstance().getSkillConfigInfoById(id)
+        skillInfo.armsOwner = OWNERTYPE.ENEMY
+        this.skillInfo.push({ ...skillInfo })
+        this.schedule(() => {
+            if (PlayerStateManager.Instance.PlayerNode) {
+                const slefPos = this.node.getWorldPosition().toVec2()
+                const playerPos = PlayerStateManager.Instance.PlayerNode.getWorldPosition().toVec2()
+                const distance = Vec2.distance(slefPos, playerPos)
+                if (distance <= skillInfo.armsProp.attackRange) {
+                    this.castSkill(id)
+                }
+            }
+        }, skillInfo.armsProp.attackSpace)
+    }
+
+    public unMountSkill(id: number) {
+        const castSkillScript = this.skills.get(id)
+        castSkillScript.destroy()
+        this.skills.delete(id)
+        this.skillInfo = this.skillInfo.filter(s => s.id !== id)
+    }
+
+    public castSkill(id: number) {
+        const castSkillScript = this.skills.get(id)
+        const info = this.skillInfo.filter(s => s.id === id)
+        if (info.length) {
+            castSkillScript.castSkill(info[0])
+        }
     }
 }

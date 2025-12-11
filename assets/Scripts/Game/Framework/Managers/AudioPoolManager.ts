@@ -1,12 +1,12 @@
 // AudioPoolManager.ts（全局单例，管理音频池）
-import { _decorator, Component, AudioSource, AudioClip, Node } from "cc"
+import { _decorator, Component, AudioSource, AudioClip, Node} from "cc"
 const { ccclass, property } = _decorator
 
 @ccclass("AudioPoolManager")
 export default class AudioPoolManager {
     private static Instance: AudioPoolManager
     private audioPool: AudioSource[] = [] // 音频源池
-    private poolSize = 10 // 池大小（根据需求调整，如 5~10 个）
+    private poolSize = 50 // 池大小（根据需求调整，如 5~10 个）
     private poolNode: Node // 存储音频池组件的节点
 
     private constructor() { }

@@ -13,12 +13,6 @@ export class PanelItem extends Component {
     
     public id: number = 0
 
-    protected update(dt: number) {
-        if (this.id !== Panel.Instance.id) {
-            this.setSelect(false)
-        }
-    }
-
     // 设置内容
     public setItems(id: number, title: string, content: string, rarity?: string) {
         this.id = id
@@ -36,6 +30,7 @@ export class PanelItem extends Component {
 
     public panelClick() {
         Panel.Instance.id = this.id
+        Panel.Instance.setChecked(this.node.uuid)
         this.setSelect(true)
     }
 }

@@ -8,7 +8,8 @@ export namespace Config {
         icon: string
         rarity: string
         effectType: effectType
-        effects: PropertyConfigEffects
+        skillId?: number
+        effects: PropertyConfigEffects | SkillPropertyConfigEffects
     }
 
     export interface PropertyConfigEffects {
@@ -20,8 +21,19 @@ export namespace Config {
         extraDamage?: number
     }
 
+    export interface SkillPropertyConfigEffects {
+        attackRange?: number
+        attackSpeed?: number
+        attackAngle?: number
+        attackSpace?: number
+        bulletSpace?: number
+        armsCount?: number
+        armsLifeTime?: number
+    }
+
     export enum effectType {
         HP = "HP",
+        SKILL = "SKILL",
         AttackAttr = "AttackAttr",
         DefenseAttr = "DefenseAttr",
     }

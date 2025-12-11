@@ -1,4 +1,5 @@
 import { _decorator, Asset, AssetManager, assetManager } from 'cc'
+import { ASSETPATH } from '../../../Constant/Enum'
 
 export class ResourceManager  {
     public static Instance: ResourceManager = null
@@ -9,7 +10,7 @@ export class ResourceManager  {
         }
     }
 
-    public async AwaitGetAsset<T extends Asset>(bundleName: string, assetPath: string, assetType: new () => T) {
+    public async AwaitGetAsset<T extends Asset>(bundleName: ASSETPATH, assetPath: string, assetType: new () => T) {
         let bundle: AssetManager.Bundle = assetManager.getBundle(bundleName)
         if (!bundle) {
             bundle = await this.AwaitLoadBundle(bundleName)

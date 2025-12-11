@@ -1,5 +1,4 @@
-import { _decorator, Collider2D, Component, Contact2DType, EPhysics2DDrawFlags, geometry, instantiate, IPhysics2DContact, math, Node, PhysicsSystem2D, Prefab, RigidBody2D, Vec2, Vec3, } from 'cc'
-import { ResourceManager } from '../Framework/Managers/ResourceManager'
+import { _decorator, Component, Node, RigidBody2D, Vec2, } from 'cc'
 const { ccclass, property } = _decorator
 
 @ccclass('EnemyMove')
@@ -27,6 +26,7 @@ export class EnemyMove extends Component {
     // 追踪方向
     private moveDir: Vec2 = new Vec2()
 
+
     protected onLoad() {
         // 获取刚体组件
         let rigidBody = this.getComponent(RigidBody2D)
@@ -44,7 +44,7 @@ export class EnemyMove extends Component {
         if (this.rigidBody && this.targetNode) {
             const targetPos = this.targetNode.worldPosition.toVec2()
             const enemyPos = this.node.worldPosition.toVec2()
-            Vec2.subtract(this.moveDir,  targetPos, enemyPos)
+            Vec2.subtract(this.moveDir, targetPos, enemyPos)
 
             // 超出范围停止追踪
             const distance = this.moveDir.length()
@@ -57,6 +57,6 @@ export class EnemyMove extends Component {
             const velocity = this.moveDir.multiplyScalar(this.moveSpeed)
             this.rigidBody.linearVelocity = velocity
         }
-    } 
+    }
 }
 

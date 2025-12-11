@@ -1,6 +1,6 @@
 import { _decorator, Camera, Component, instantiate, Node, Prefab, sp, Vec3 } from 'cc'
 import { ResourceManager } from '../Game/Framework/Managers/ResourceManager'
-import { ARMSTYPE, OWNERTYPE } from '../Constant/Enum'
+import { ARMSTYPE, ASSETPATH, OWNERTYPE } from '../Constant/Enum'
 import { AttackAttr } from '../Game/Attack/AttackAttr'
 import { AutoAttack } from '../Game/Attack/AutoAttack'
 import { EnemyMove } from '../Game/Move/EnemyMove'
@@ -8,6 +8,7 @@ import { CameraFollow2D } from '../Game/Framework/Managers/CameraFollow2D'
 import { PlayerStateManager } from '../Game/GameManager/PlayerStateManager'
 import { SkillManager } from '../Game/GameManager/SkillManager'
 import { PlayerManager } from '../Game/GameManager/PlayerManager'
+import { EnemyManager } from '../Game/GameManager/EnemyManager'
 const { ccclass, property } = _decorator
 
 @ccclass('CreateEnemys')
@@ -34,7 +35,7 @@ export class CreateEnemys extends Component {
     }
 
     async initPlayer() {
-        const playerPrefab = await ResourceManager.Instance.AwaitGetAsset("Prefabs", "Player/Player", Prefab)
+        const playerPrefab = await ResourceManager.Instance.AwaitGetAsset(ASSETPATH.PREFAB, "Player/Player", Prefab)
         const playerNode = instantiate(playerPrefab)
 
         this.node.addChild(playerNode)
@@ -50,34 +51,27 @@ export class CreateEnemys extends Component {
             cameraScript.target = this.player
         }
 
-        // PlayerManager.Instance.mountSkill(1001)
-        PlayerManager.Instance.mountSkill(1002)
-
+        PlayerStateManager.Instance.getSkill()
     }
 
     async initEnemy() {
         for (let i = 0; i < 50; i++) {
-            const spiderPrefab = await ResourceManager.Instance.AwaitGetAsset("Prefabs", "NPC/Spider", Prefab)
+            const spiderPrefab = await ResourceManager.Instance.AwaitGetAsset(ASSETPATH.PREFAB, "NPC/Spider", Prefab)
             const spiderNode = instantiate(spiderPrefab)
 
             const enemyMoveScript = spiderNode.getComponent(EnemyMove)
             enemyMoveScript.targetNode = this.player
             enemyMoveScript.attackRange = 150
-            
-            // 设置攻击相关行为
-            // const spiderAutoAttackScript = spiderNode.getComponent(AutoAttack)
-            // const skillInfo = await SkillManager.getInstance().getSkillConfigInfoById(1002)
-            // skillInfo.armsOwner = OWNERTYPE.ENEMY
-            // skillInfo.armsProp.attackRange = 200
-            // spiderAutoAttackScript.skillConfig = skillInfo
-            // spiderAutoAttackScript.attackAttr = new AttackAttr({
-            //     basePhysicalDamage: 100,
-            //     baseMagicDamage: 15,
-            // })
-            // spiderAutoAttackScript.attackTargetNode = this.player
+
+            const enemyManager = spiderNode.getComponent(EnemyManager)
+            enemyManager.HP = 200
+
+            enemyManager.mountSkill(1002)
+
             spiderNode.setWorldPosition(new Vec3(300, 500, 0))
 
             this.node.addChild(spiderNode)
+
         }
     }
 }

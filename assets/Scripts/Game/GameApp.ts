@@ -21,7 +21,6 @@ export class GameApp extends Component {
     InitGameManager() {
         new ResourceManager().Init()
         new PlayerStateManager().Init()
-        SkillManager.getInstance().loadConfigs()
     }
 
     public async EnterGame() {

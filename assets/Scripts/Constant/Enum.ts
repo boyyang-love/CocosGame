@@ -69,7 +69,8 @@ export enum OWNERTYPE {
 export enum ARMSTYPE {
     MELEE = "MELEE",    // 近战武器
     RANGED = "RANGED",   // 远程武器
-    MAGIC = "RANGED",     // 魔法武器
+    MAGIC = "MAGIC",     // 魔法武器
+    RITUAL = "RITUAL", // 阵法
 }
 
 // 攻击方式
@@ -87,4 +88,15 @@ export enum GAMEAUDIO {
 // 事件监听
 export enum CUSTOMEVENTNAME{
     SKILLCHANGE,
+}
+
+// 游戏状态
+export enum GAMESTATUS {
+    PAUSE,
+    STOP,
+    PLAY
+}
+
+export enum ASSETPATH {
+    PREFAB = "Prefabs"
 }

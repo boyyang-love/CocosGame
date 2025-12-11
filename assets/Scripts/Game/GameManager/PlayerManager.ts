@@ -5,7 +5,7 @@ import { DamageCalculator } from '../Attack/DamageCalculator'
 import { ResourceManager } from '../Framework/Managers/ResourceManager'
 import { Pop } from '../../Pop/Pop'
 import { PlayerStateManager } from './PlayerStateManager'
-import { HPTYPE, OWNERTYPE } from '../../Constant/Enum'
+import { ASSETPATH, HPTYPE, OWNERTYPE } from '../../Constant/Enum'
 import AudioPoolManager from '../Framework/Managers/AudioPoolManager'
 import { CastSkill } from '../Attack/CastSkill'
 import { SkillManager } from './SkillManager'
@@ -39,7 +39,7 @@ export class PlayerManager extends Component {
 
     private reduceHealth(damage: number, isCrit: boolean) {
         // 实现扣血逻辑（如怪物生命值 = 生命值 - damage）
-        ResourceManager.Instance.AwaitGetAsset("Prefabs", "Effects/Boom", Prefab).then((prefab) => {
+        ResourceManager.Instance.AwaitGetAsset(ASSETPATH.PREFAB, "Effects/BloodImpact", Prefab).then((prefab) => {
             const boomNode = instantiate(prefab)
             this.node.addChild(boomNode)
             boomNode.setWorldPosition(this.node.getWorldPosition())
@@ -48,7 +48,7 @@ export class PlayerManager extends Component {
                 if (boomNode.isValid) {
                     boomNode.destroy()
                 }
-            }, 1)
+            })
         })
 
         PlayerStateManager.Instance.setHp(-damage, HPTYPE.HP)
@@ -57,7 +57,7 @@ export class PlayerManager extends Component {
     }
 
     private setPop(damage: number, isCrit: boolean) {
-        ResourceManager.Instance.AwaitGetAsset("Prefabs", "Pop/pop", Prefab).then((Prefab) => {
+        ResourceManager.Instance.AwaitGetAsset(ASSETPATH.PREFAB, "Pop/pop", Prefab).then((Prefab) => {
             const popNode = instantiate(Prefab)
             // 是否暴击
             if (isCrit) {
@@ -88,7 +88,7 @@ export class PlayerManager extends Component {
         this.skills.set(id, castSkillScript)
         const skillInfo = SkillManager.getInstance().getSkillConfigInfoById(id)
         skillInfo.armsOwner = OWNERTYPE.PLAYER
-        PlayerStateManager.Instance.setSkill(skillInfo)
+        PlayerStateManager.Instance.setSkill({...skillInfo})
     }
 
     public unMountSkill(id: number) {
@@ -100,7 +100,10 @@ export class PlayerManager extends Component {
 
     public castSkill(id: number) {
         const castSkillScript = this.skills.get(id)
-        castSkillScript.castSkill(id)
+        const info = PlayerStateManager.Instance.getSkillById(id)
+        if (info) {
+            castSkillScript.castSkill(info)
+        }
     }
 }
 

@@ -1,10 +1,10 @@
 import { _decorator, Component, find, instantiate, math, Node, Prefab, RigidBody2D, Vec2, Vec3 } from 'cc'
-import { ARMSTYPE, OWNERTYPE } from '../../Constant/Enum'
+import { ARMSTYPE, ASSETPATH, OWNERTYPE } from '../../Constant/Enum'
 import { AttackAttr } from './AttackAttr'
 import { Arms } from '../Arms/Arms'
 import { Config } from 'db://assets/Types/Config'
 import { ResourceManager } from '../Framework/Managers/ResourceManager'
-import { EnemyStoreManager, EnemyStoreMapInfo } from '../GameManager/EnemyStoreManager'
+import { EnemyStoreManager } from '../GameManager/EnemyStoreManager'
 const { ccclass, property } = _decorator
 
 @ccclass('AutoAttack')
@@ -206,19 +206,19 @@ export class AutoAttack extends Component {
     }
 
     async loadPrefab(path: string): Promise<Prefab> {
-        return await ResourceManager.Instance.AwaitGetAsset("Prefabs", path, Prefab)
+        return await ResourceManager.Instance.AwaitGetAsset(ASSETPATH.PREFAB, path, Prefab)
     }
 
-    private findEnemiesInRange(): EnemyStoreMapInfo[] {
+    private findEnemiesInRange(): Node[] {
         const playerPos = new Vec2(this.node.x, this.node.y) // 角色当前位置
         const allEnemies = EnemyStoreManager.getInstance().getAllEnemies()
-        const nearbyEnemies: EnemyStoreMapInfo[] = []
+        const nearbyEnemies: Node[] = []
 
         for (const enemy of allEnemies) {
-            if (!enemy.node.active) continue // 跳过未激活的敌人
+            if (!enemy.active) continue // 跳过未激活的敌人
 
             // 计算角色与敌人的平面距离（2D 核心）
-            const enemyPos = new Vec2(enemy.node.x, enemy.node.y)
+            const enemyPos = new Vec2(enemy.x, enemy.y)
             const distance = math.Vec2.distance(playerPos, enemyPos)
 
             // 筛选距离小于检测范围的敌人

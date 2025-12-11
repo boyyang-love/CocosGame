@@ -14,17 +14,21 @@ export class CoolDown extends Component {
     public collDown: number = 4
 
     start() {
-        this.schedule(() => {
-            this.mesk.fillRange = this.mesk.fillRange - (1 / this.collDown)
-            if (this.mesk.fillRange <= 0) {
-                this.mesk.fillRange = 1
-                this.attack()
-            }
-        }, 1)
+        // this.schedule(() => {
+        //     this.mesk.fillRange = this.mesk.fillRange - (1 / this.collDown)
+        //     if (this.mesk.fillRange <= 0) {
+        //         this.mesk.fillRange = 1
+        //         this.attack()
+        //     }
+        // }, 1)
     }
 
     update(deltaTime: number) {
-
+        this.mesk.fillRange = this.mesk.fillRange - (1 * deltaTime / this.collDown)
+        if (this.mesk.fillRange <= 0) {
+            this.mesk.fillRange = 1
+            this.attack()
+        }
     }
 
     attack() {

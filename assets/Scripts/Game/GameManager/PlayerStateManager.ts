@@ -1,5 +1,5 @@
-import { math, Node, Prefab, EventTarget } from "cc"
-import { ARMSTYPE, ATTACKMETHOD, CUSTOMEVENTNAME, HPTYPE, OWNERTYPE, } from "../../Constant/Enum"
+import { math, Node, Prefab, EventTarget, instantiate } from "cc"
+import { ARMSTYPE, ASSETPATH, ATTACKMETHOD, CUSTOMEVENTNAME, HPTYPE, OWNERTYPE, } from "../../Constant/Enum"
 import { AttackAttr } from "../Attack/AttackAttr"
 import { DefenseAttr } from "../Attack/DefenseAttr"
 import { SkillManager } from "./SkillManager"
@@ -7,6 +7,7 @@ import { Panel } from "../Panel/Panel"
 import { Config } from 'db://assets/Types/Config'
 import { AutoAttack } from "../Attack/AutoAttack"
 import { EventManager } from "../Framework/Managers/EventManager"
+import { ResourceManager } from "../Framework/Managers/ResourceManager"
 
 export class PlayerStateManager {
     public static Instance: PlayerStateManager = null
@@ -26,7 +27,7 @@ export class PlayerStateManager {
     // 防御
     public defenseAttr: DefenseAttr = new DefenseAttr()
     // 技能列表
-    public skill: Config.SkillConfig[] = []
+    public skills: Config.SkillConfig[] = []
 
     public Init() {
         if (PlayerStateManager.Instance === null) {
@@ -40,11 +41,13 @@ export class PlayerStateManager {
         if (this.EXP > this.MaxEXP) {
             this.Level += 1
             this.EXP = this.EXP - this.MaxEXP
-            if (this.Level % 5 === 0) {
-                this.getSkill()
-            } else {
-                this.getProperty()
-            }
+            this.createAni().then(() => {
+                if (this.Level % 5 === 0) {
+                    this.getSkill()
+                } else {
+                    this.getProperty()
+                }
+            })
         }
     }
 
@@ -56,6 +59,16 @@ export class PlayerStateManager {
         if (type === HPTYPE.HPMax) {
             this.MaxHP = this.MaxHP + hp
         }
+    }
+
+    public setSkillProperty(id: number, key: string, value: number) {
+        this.skills.forEach(s => {
+            if (s.id === id) {
+                if (s.armsProp[key]) {
+                    s.armsProp[key] = Number((s.armsProp[key] + value).toFixed(2))
+                }
+            }
+        })
     }
 
     public getProperty() {
@@ -90,22 +103,22 @@ export class PlayerStateManager {
         this.defenseAttr[key] = Number((this.defenseAttr[key] + valule).toFixed(2))
     }
 
-    public async setArms(info: Config.SkillConfig) {
-        if (this.PlayerNode) {
-            const autoAttackScript = this.PlayerNode.addComponent(AutoAttack)
-            info.armsOwner = OWNERTYPE.PLAYER
-            autoAttackScript.skillConfig = info
-        }
-    }
-
     public setSkill(skill: Config.SkillConfig) {
-        this.skill.push(skill)
-        console.log(skill)
+        this.skills.push(skill)
         EventManager.instance.emit(CUSTOMEVENTNAME.SKILLCHANGE)
     }
 
     public delSkill(id: number) {
-        this.skill = this.skill.filter(s => s.id != id)
+        this.skills = this.skills.filter(s => s.id != id)
+        EventManager.instance.emit(CUSTOMEVENTNAME.SKILLCHANGE)
+    }
+
+    public getSkillById(id: number): Config.SkillConfig {
+        const info = this.skills.filter(s => s.id === id)
+        if (info.length) {
+            return info[0]
+        }
+        return null
     }
 
     randomPickFromNumberSet(set: Set<number>, count: number = 3): number[] {
@@ -121,6 +134,20 @@ export class PlayerStateManager {
 
         // 返回前 count 个元素（已打乱且无重复）
         return arr.slice(0, count)
+    }
+
+    createAni() {
+        return new Promise(async (resolve, reject) => {
+            const wheelPrefab = await ResourceManager.Instance.AwaitGetAsset(ASSETPATH.PREFAB, "Effects/Wheel", Prefab)
+            const wheelNode = instantiate(wheelPrefab)
+            this.PlayerNode.addChild(wheelNode)
+            wheelNode.setWorldPosition(this.PlayerNode.getWorldPosition())
+
+            setTimeout(() => {
+                this.PlayerNode.removeChild(wheelNode)
+                resolve(true)
+            }, 2000)
+        })
     }
 }
 

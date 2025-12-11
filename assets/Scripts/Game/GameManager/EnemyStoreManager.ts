@@ -1,16 +1,10 @@
-import { _decorator, Component, math, Node, Vec2 } from 'cc'
+import { _decorator, Component, math, Node, tween, Vec2 } from 'cc'
 const { ccclass, property } = _decorator
-
-export interface EnemyStoreMapInfo {
-    distance: number
-    node: Node
-}
-
 @ccclass('EnemyStoreManager')
 export class EnemyStoreManager {
     private static _instance: EnemyStoreManager
 
-    private enemyMap: Map<string, EnemyStoreMapInfo> = new Map()
+    private enemyMap: Map<string, Node> = new Map()
 
 
     public static getInstance() {
@@ -24,7 +18,7 @@ export class EnemyStoreManager {
     // 添加敌人到缓存
     public addEnemy(enemyNode: Node): void {
         const enemyId = enemyNode.uuid // 用节点唯一ID作为key
-        this.enemyMap.set(enemyId, {distance: 0, node: enemyNode})
+        this.enemyMap.set(enemyId, enemyNode)
     }
 
     // 从缓存移除敌人
@@ -34,7 +28,7 @@ export class EnemyStoreManager {
     }
 
     // 获取所有敌人节点
-    public getAllEnemies(): EnemyStoreMapInfo[] {
+    public getAllEnemies(): Node[] {
         return Array.from(this.enemyMap.values())
     }
 
@@ -43,27 +37,23 @@ export class EnemyStoreManager {
         this.enemyMap.clear()
     }
 
-    public findEnemiesInRange(point: Vec2, range: number): EnemyStoreMapInfo[] {
+    public findEnemiesInRange(point: Vec2, range: number): Node[] {
         const allEnemies = this.getAllEnemies()
-        const nearbyEnemies: EnemyStoreMapInfo[] = []
+        const nearbyEnemies: Node[] = []
 
         for (const enemy of allEnemies) {
-            if (!enemy.node.active) continue // 跳过未激活的敌人
+            if (!enemy.active) continue // 跳过未激活的敌人
 
             // 计算角色与敌人的平面距离（2D 核心）
-            const enemyPos = new Vec2(enemy.node.getWorldPosition().toVec2())
+            const enemyPos = new Vec2(enemy.getWorldPosition().toVec2())
             const distance = Vec2.distance(point, enemyPos)
-            console.log(point)
-            enemy.distance = distance
-            console.log(distance)
-            console.log(enemyPos)
             // 筛选距离小于检测范围的敌人
             if (distance <= range) {
                 nearbyEnemies.push(enemy)
             }
         }
 
-        return nearbyEnemies.sort((a, b) => a.distance - b.distance)
+        return nearbyEnemies
     }
 }
 
