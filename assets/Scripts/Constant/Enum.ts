@@ -100,3 +100,12 @@ export enum GAMESTATUS {
 export enum ASSETPATH {
     PREFAB = "Prefabs"
 }
+
+export enum AUDIOPATH {
+    bubble = "Audio/bubble"
+}
+
+export enum SKILLPROPERTYEFFECT {
+    ARMSPROP = "armsProp",
+    ARMSATTACKATTR = "armsAttackAttr",
+}

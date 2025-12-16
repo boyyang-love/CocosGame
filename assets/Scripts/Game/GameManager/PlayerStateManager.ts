@@ -1,13 +1,13 @@
-import { math, Node, Prefab, EventTarget, instantiate } from "cc"
-import { ARMSTYPE, ASSETPATH, ATTACKMETHOD, CUSTOMEVENTNAME, HPTYPE, OWNERTYPE, } from "../../Constant/Enum"
+import { math, Node, Prefab, instantiate } from "cc"
+import { ASSETPATH, CUSTOMEVENTNAME, HPTYPE, SKILLPROPERTYEFFECT } from "../../Constant/Enum"
 import { AttackAttr } from "../Attack/AttackAttr"
 import { DefenseAttr } from "../Attack/DefenseAttr"
 import { SkillManager } from "./SkillManager"
 import { Panel } from "../Panel/Panel"
 import { Config } from 'db://assets/Types/Config'
-import { AutoAttack } from "../Attack/AutoAttack"
 import { EventManager } from "../Framework/Managers/EventManager"
 import { ResourceManager } from "../Framework/Managers/ResourceManager"
+import { randomPickFromNumberSet } from "../../Utils/RandomPickFromNumberSet"
 
 export class PlayerStateManager {
     public static Instance: PlayerStateManager = null
@@ -36,6 +36,7 @@ export class PlayerStateManager {
         }
     }
 
+    // 设置经验
     public setEXP(exp: number) {
         this.EXP += exp
         if (this.EXP > this.MaxEXP) {
@@ -51,6 +52,7 @@ export class PlayerStateManager {
         }
     }
 
+    // 设置hp
     public setHp(hp: number, type: HPTYPE) {
         if (type === HPTYPE.HP) {
             this.HP = math.clamp(this.HP + hp, 0, this.MaxHP)
@@ -61,53 +63,73 @@ export class PlayerStateManager {
         }
     }
 
-    public setSkillProperty(id: number, key: string, value: number) {
+
+    // 设置技能各项属性值
+    public setSkillProperty(id: number, key: string, value: number, type: string) {
         this.skills.forEach(s => {
             if (s.id === id) {
-                if (s.armsProp[key]) {
-                    s.armsProp[key] = Number((s.armsProp[key] + value).toFixed(2))
+                if (s[type][key]) {
+                    s[type][key] = Number((s[type][key] + value).toFixed(2))
                 }
             }
         })
     }
 
+    // 随机获取属性
     public getProperty() {
         const ids = SkillManager.getInstance().propertyConfigsId
-        const randomId = this.randomPickFromNumberSet(ids)
+        const randomId = randomPickFromNumberSet(ids)
         const infos = randomId.map(id => {
             return {
                 ...SkillManager.getInstance().getPropertyConfigInfoById(id)
             }
         })
 
-        Panel.Instance.setPanelCard(infos)
+        Panel.Instance.setPropertyConfigPanelCard(infos)
     }
 
+    // 随机获取技能属性
+    public getSkillProperty() {
+        const ids = SkillManager.getInstance().skillPropertyConfigsId
+        const randomId = randomPickFromNumberSet(ids)
+
+        const infos = randomId.map(id => {
+            return {
+                ...SkillManager.getInstance().getSkillPropertyInfoById(id)
+            }
+        })
+    }
+
+    // 随机获取技能
     public getSkill() {
         const ids = SkillManager.getInstance().skillConfigsId
-        const randomId = this.randomPickFromNumberSet(ids)
+        const randomId = randomPickFromNumberSet(ids)
         const infos = randomId.map(id => {
             return {
                 ...SkillManager.getInstance().getSkillConfigInfoById(id)
             }
         })
 
-        Panel.Instance.setSkillPanelCard(infos)
+        Panel.Instance.setSkillConfigPanelCard(infos)
     }
 
+    // 设置攻击属性
     public setAttackAttr(key: string, valule: number) {
         this.attackAttr[key] = Number((this.attackAttr[key] + valule).toFixed(2))
     }
 
+    // 设置防御属性
     public setDefenseAttr(key: string, valule: number) {
         this.defenseAttr[key] = Number((this.defenseAttr[key] + valule).toFixed(2))
     }
 
+    // 设置技能
     public setSkill(skill: Config.SkillConfig) {
         this.skills.push(skill)
         EventManager.instance.emit(CUSTOMEVENTNAME.SKILLCHANGE)
     }
 
+    // 删除技能
     public delSkill(id: number) {
         this.skills = this.skills.filter(s => s.id != id)
         EventManager.instance.emit(CUSTOMEVENTNAME.SKILLCHANGE)
@@ -121,20 +143,7 @@ export class PlayerStateManager {
         return null
     }
 
-    randomPickFromNumberSet(set: Set<number>, count: number = 3): number[] {
-        const arr = Array.from(set)
-        if (arr.length <= count) return [...arr]
-
-        // Fisher-Yates 洗牌（打乱数组前 count 个元素）
-        for (let i = 0; i < count; i++) {
-            const randomIndex = i + Math.floor(Math.random() * (arr.length - i));
-            // 交换当前索引与随机索引的元素
-            [arr[i], arr[randomIndex]] = [arr[randomIndex], arr[i]]
-        }
-
-        // 返回前 count 个元素（已打乱且无重复）
-        return arr.slice(0, count)
-    }
+    
 
     createAni() {
         return new Promise(async (resolve, reject) => {

@@ -18,7 +18,9 @@
 			"bulletSpace": 0.1,
 			"armsCount": 1,
 			"armsLifeTime": 3
-		}
+		},
+		"armsAttackAttr": {}
+
 	},
 	{
 		"id": 1002,
@@ -39,7 +41,8 @@
 			"bulletSpace": 0.1,
 			"armsCount": 1,
 			"armsLifeTime": 4
-		}
+		},
+		"armsAttackAttr": {}
 	},
 	{
 		"id": 1003,
@@ -60,7 +63,8 @@
 			"bulletSpace": 0.1,
 			"armsCount": 1,
 			"armsLifeTime": 4
-		}
+		},
+		"armsAttackAttr": {}
 	},
 	{
 		"id": 1004,
@@ -81,6 +85,7 @@
 			"bulletSpace": 0.1,
 			"armsCount": 1,
 			"armsLifeTime": 4
-		}
+		},
+		"armsAttackAttr": {}
 	}
 ]

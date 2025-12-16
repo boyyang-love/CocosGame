@@ -93,7 +93,7 @@ export class AutoAttack extends Component {
             const enemyNode = this.findEnemiesInRange()
             const directions = enemyNode.map(e => {
                 const direction = new Vec2()
-                return Vec2.subtract(direction, e.node.worldPosition.toVec2(), armsPos).normalize()
+                return Vec2.subtract(direction, e.worldPosition.toVec2(), armsPos).normalize()
             })
 
             for (let i = 0; i < this.skillConfig.armsProp.armsCount; i++) {

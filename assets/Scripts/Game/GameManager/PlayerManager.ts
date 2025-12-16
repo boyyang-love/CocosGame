@@ -5,7 +5,7 @@ import { DamageCalculator } from '../Attack/DamageCalculator'
 import { ResourceManager } from '../Framework/Managers/ResourceManager'
 import { Pop } from '../../Pop/Pop'
 import { PlayerStateManager } from './PlayerStateManager'
-import { ASSETPATH, HPTYPE, OWNERTYPE } from '../../Constant/Enum'
+import { ASSETPATH, AUDIOPATH, HPTYPE, OWNERTYPE } from '../../Constant/Enum'
 import AudioPoolManager from '../Framework/Managers/AudioPoolManager'
 import { CastSkill } from '../Attack/CastSkill'
 import { SkillManager } from './SkillManager'
@@ -78,9 +78,7 @@ export class PlayerManager extends Component {
 
     public setExp(exp: number) {
         PlayerStateManager.Instance.setEXP(exp)
-        if (this.expAudioClip) {
-            AudioPoolManager.getInstance().playAudio(this.expAudioClip, 1)
-        }
+        AudioPoolManager.getInstance().playAudio(AUDIOPATH.bubble, 1)
     }
 
     public mountSkill(id: number) {
@@ -88,7 +86,7 @@ export class PlayerManager extends Component {
         this.skills.set(id, castSkillScript)
         const skillInfo = SkillManager.getInstance().getSkillConfigInfoById(id)
         skillInfo.armsOwner = OWNERTYPE.PLAYER
-        PlayerStateManager.Instance.setSkill({...skillInfo})
+        PlayerStateManager.Instance.setSkill({ ...skillInfo })
     }
 
     public unMountSkill(id: number) {

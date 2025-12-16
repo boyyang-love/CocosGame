@@ -1,6 +1,15 @@
 import { ARMSTYPE, ATTACKMETHOD, OWNERTYPE } from "../Scripts/Constant/Enum"
-
+import { AttackAttr } from "../Scripts/Game/Attack/AttackAttr"
 export namespace Config {
+    // 影响类型
+    export enum effectType {
+        HP = "HP",
+        AttackAttr = "AttackAttr",
+        DefenseAttr = "DefenseAttr",
+        ARMSPROP = "armsProp",
+        ARMSATTACKATTR = "armsAttackAttr"
+    }
+    // 玩家属性
     export interface PropertyConfig {
         id: number
         name: string
@@ -8,8 +17,7 @@ export namespace Config {
         icon: string
         rarity: string
         effectType: effectType
-        skillId?: number
-        effects: PropertyConfigEffects | SkillPropertyConfigEffects
+        effects: PropertyConfigEffects
     }
 
     export interface PropertyConfigEffects {
@@ -21,23 +29,7 @@ export namespace Config {
         extraDamage?: number
     }
 
-    export interface SkillPropertyConfigEffects {
-        attackRange?: number
-        attackSpeed?: number
-        attackAngle?: number
-        attackSpace?: number
-        bulletSpace?: number
-        armsCount?: number
-        armsLifeTime?: number
-    }
-
-    export enum effectType {
-        HP = "HP",
-        SKILL = "SKILL",
-        AttackAttr = "AttackAttr",
-        DefenseAttr = "DefenseAttr",
-    }
-
+    // 技能属性
     export interface SkillConfig {
         id: number
         name: string
@@ -47,9 +39,30 @@ export namespace Config {
         effectPrefab: string
         sound: string
         attackMethod: ATTACKMETHOD
+        armsOwner: OWNERTYPE
         armsType: ARMSTYPE
         armsProp: ArmsProp
-        armsOwner: OWNERTYPE
+        armsAttackAttr: Partial<AttackAttr>
+    }
+
+    export interface SkillPropertyConfig {
+        id: number
+        name: string
+        desc: string
+        icon: string
+        effectType: effectType.ARMSPROP | effectType.ARMSATTACKATTR
+        skillId: number
+        effects: ArmsProp
+    }
+
+    export interface SkillPropertyConfigEffects {
+        attackRange?: number
+        attackSpeed?: number
+        attackAngle?: number
+        attackSpace?: number
+        bulletSpace?: number
+        armsCount?: number
+        armsLifeTime?: number
     }
 
     export interface ArmsProp {

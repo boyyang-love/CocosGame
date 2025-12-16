@@ -1,5 +1,5 @@
-import { ASSETPATH } from './../../Constant/Enum';
-import { _decorator, AudioClip, Collider2D, Component, Contact2DType, instantiate, IPhysics2DContact, Node, Prefab, resources, RigidBody, RigidBody2D, Vec2 } from 'cc'
+import { ASSETPATH } from './../../Constant/Enum'
+import { _decorator, Collider2D, Component, Contact2DType, instantiate, IPhysics2DContact, Prefab, resources, RigidBody2D, Vec2 } from 'cc'
 import { ARMSTYPE, OWNERTYPE, PHY_GRPUP } from '../../Constant/Enum'
 import { PlayerManager } from '../GameManager/PlayerManager'
 import { EnemyManager } from '../GameManager/EnemyManager'
@@ -18,7 +18,7 @@ export class Arms extends Component {
     public skillConfig: Config.SkillConfig
 
     protected onLoad() {
-        ArmsStoreManager.getInstance().addArm(this.node)
+        
     }
 
     protected start() {
@@ -27,6 +27,10 @@ export class Arms extends Component {
             collider.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this)
             collider.on(Contact2DType.END_CONTACT, this.onEndContact, this)
         }
+
+        this.scheduleOnce(() => {
+            this.node.destroy()
+        }, this.skillConfig.armsProp.armsLifeTime)
     }
 
     protected onDestroy() {
@@ -35,8 +39,6 @@ export class Arms extends Component {
             collider.off(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this)
             collider.off(Contact2DType.END_CONTACT, this.onEndContact, this)
         }
-
-        ArmsStoreManager.getInstance().removeArm(this.node)
     }
 
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
@@ -63,25 +65,18 @@ export class Arms extends Component {
         // 只在两个碰撞体结束接触时被调用一次
     }
 
-    async destroyArm() {
-        if (this.skillConfig.armsType !== ARMSTYPE.MELEE) {
-            this.node.destroy()
-        }
-    }
-
     async playEffect(collider: Collider2D) {
         if (this.skillConfig.armsType !== ARMSTYPE.MELEE && this.skillConfig.armsType !== ARMSTYPE.RITUAL) {
             const rigidBody2D = this.node.getComponent(RigidBody2D)
             if (rigidBody2D) {
                 rigidBody2D.linearVelocity = Vec2.ZERO
+                rigidBody2D.enabled = false
                 this.node.active = false
             }
         }
 
         if (this.skillConfig.sound) {
-            resources.load<AudioClip>(this.skillConfig.sound, (err, data) => {
-                AudioPoolManager.getInstance().playAudio(data, 0.5)
-            })
+            AudioPoolManager.getInstance().playAudio(this.skillConfig.sound, 0.5)
         }
 
         if (this.skillConfig.effectPrefab) {
@@ -90,8 +85,9 @@ export class Arms extends Component {
             collider.node.addChild(effectNode)
             effectNode.setWorldPosition(collider.node.getWorldPosition())
             setTimeout(() => {
-                collider.node.removeChild(effectNode)
-                this.destroy()
+                if (collider.node) {
+                    collider.node.removeChild(effectNode)
+                }
             }, 1000)
         }
     }

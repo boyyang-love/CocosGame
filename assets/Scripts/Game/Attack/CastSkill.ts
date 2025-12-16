@@ -183,7 +183,7 @@ export class CastSkill extends Component {
         // 子弹自动销毁（避免内存泄漏）
         this.scheduleOnce(() => {
             armsNode.destroy()
-        }, this.skillConfig.armsProp.armsLifeTime)
+        }, info.armsProp.armsLifeTime)
     }
 
     private async createRitual(info: Config.SkillConfig) {
@@ -199,6 +199,7 @@ export class CastSkill extends Component {
         this.node.parent.addChild(armsNode)
         armsNode.setWorldPosition(this.node.getWorldPosition())
 
+        // 子弹自动销毁（避免内存泄漏）
         this.scheduleOnce(() => {
             armsNode.destroy()
         }, info.armsProp.armsLifeTime)
@@ -232,9 +233,9 @@ export class CastSkill extends Component {
 
     // 获取攻击属性
     private getAttackAttr(info: Config.SkillConfig): AttackAttr {
-        if(info.armsOwner === OWNERTYPE.PLAYER){
+        if (info.armsOwner === OWNERTYPE.PLAYER) {
             return PlayerStateManager.Instance.attackAttr
-        }else{
+        } else {
             const enemyManagerScript = this.node.getComponent(EnemyManager)
             return enemyManagerScript.attackAttr
         }

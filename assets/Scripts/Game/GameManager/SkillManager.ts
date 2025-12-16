@@ -11,6 +11,9 @@ export class SkillManager {
     public skillConfigs: Map<number, Config.SkillConfig> = new Map()
     public skillConfigsId: Set<number> = new Set()
 
+    public skillPropertyConfigs: Map<number, Config.SkillPropertyConfig> = new Map()
+    public skillPropertyConfigsId: Set<number> = new Set()
+
     public static getInstance(): SkillManager {
         if (!this.Instance) {
             this.Instance = new SkillManager()
@@ -33,14 +36,25 @@ export class SkillManager {
                 this.skillConfigsId.add(d.id)
             })
         })
+
+        ConfigManager.getInstance().loadConfig<Config.SkillPropertyConfig>("Config/SkillPropertyConfig").then(data => {
+            data.forEach(d => {
+                this.skillPropertyConfigs.set(d.id, d)
+                this.skillPropertyConfigsId.add(d.id)
+            })
+        })
     }
 
-    public getPropertyConfigInfoById(id: number): Config.PropertyConfig{
+    public getPropertyConfigInfoById(id: number): Config.PropertyConfig {
         return this.propertyConfigs.get(id)
     }
 
     public getSkillConfigInfoById(id: number): Config.SkillConfig {
         return this.skillConfigs.get(id)
+    }
+
+    public getSkillPropertyInfoById(id: number): Config.SkillPropertyConfig {
+        return this.skillPropertyConfigs.get(id)
     }
 }
 

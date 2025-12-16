@@ -1,5 +1,5 @@
 // AudioPoolManager.ts（全局单例，管理音频池）
-import { _decorator, Component, AudioSource, AudioClip, Node} from "cc"
+import { _decorator, Component, AudioSource, AudioClip, Node, resources } from "cc"
 const { ccclass, property } = _decorator
 
 @ccclass("AudioPoolManager")
@@ -68,18 +68,21 @@ export default class AudioPoolManager {
      * @param clip 要播放的 AudioClip
      * @param volume 音量（0~1，默认 1）
      */
-    public playAudio(clip: AudioClip, volume: number = 1): void {
-        if (!clip) {
-            console.error("音频资源为空！")
-            return
-        }
+    public playAudio(audioPath: string, volume: number = 1): void {
+        resources.load<AudioClip>(audioPath, (err, data) => {
+            if (!data) {
+                console.error("音频资源为空！")
+                return
+            }
 
-        const audioSource = this.getFreeAudioSource()
-        if (audioSource) {
-            audioSource.clip = clip
-            audioSource.volume = volume
-            audioSource.play() // 播放（不会中断其他音频）
-        }
+            const audioSource = this.getFreeAudioSource()
+            if (audioSource) {
+                audioSource.clip = data
+                audioSource.volume = volume
+                audioSource.play() // 播放（不会中断其他音频）
+            }
+        })
+
     }
 
     // 停止所有音频播放

@@ -4,7 +4,7 @@
 		"name": "技能提升【青霜】",
 		"desc": "技能青霜剑数量增加一把",
 		"icon": "textures/skills/lightning",
-		"effectType": "SKILL",
+		"effectType": "armsProp",
 		"skillId": 1001,
 		"effects": {
 			"armsCount": 1
